@@ -140,17 +140,3 @@ func scrapeEtfHistory(document *goquery.Document) ([]EtfHistory, error) {
 func buildUrl(symbol string) string {
 	return fmt.Sprintf("%s/quote/%s/history", baseUrl, symbol)
 }
-
-func buildHtmlSelector(symbol string) string {
-	return fmt.Sprintf("fin-streamer[data-symbol=\"%s\"][data-test=\"qsp-price\"]", symbol)
-}
-
-func ensureEtfRetrieval(symbol string, etfs []Etf) {
-	for _, etf := range etfs {
-		if strings.EqualFold(etf.symbol, symbol) {
-			return
-		}
-	}
-
-	fmt.Println(fmt.Sprintf("Could not find etf with symbol '%s'", symbol))
-}
