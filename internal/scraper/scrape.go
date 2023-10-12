@@ -10,25 +10,6 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-const baseUrl = "https://finance.yahoo.com"
-
-func createRequest(symbol string) (*http.Request, error) {
-	u := buildUrl(symbol)
-	r, err := http.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	uParsed, err := url.Parse(u)
-	if err != nil {
-		return nil, err
-	}
-
-	r.Host = uParsed.Host
-	r.Header.Add("User-Agent", "github.com/diogosilva96/etf-scraper")
-	return r, nil
-}
-
 // Scrapes the ETFs for the specified symbols and returns a slice of the scraped etfs.
 func Scrape(symbols []string) []Etf {
 
@@ -50,6 +31,26 @@ func Scrape(symbols []string) []Etf {
 	}
 
 	return etfs
+}
+
+const baseUrl = "https://finance.yahoo.com"
+const userAgent = "github.com/diogosilva96/etf-scraper"
+
+func createRequest(symbol string) (*http.Request, error) {
+	u := buildUrl(symbol)
+	r, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	uParsed, err := url.Parse(u)
+	if err != nil {
+		return nil, err
+	}
+
+	r.Host = uParsed.Host
+	r.Header.Add("User-Agent", userAgent)
+	return r, nil
 }
 
 func getDocument(symbol string, client *http.Client) (*goquery.Document, error) {
