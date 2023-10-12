@@ -1,14 +1,13 @@
 package main
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-	"log"
+	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/gocolly/colly"
 )
 
 type Etf struct {
@@ -27,51 +26,70 @@ func main() {
 	// TODO: make this a cli tool and allow removing/adding symbols
 	symbols := []string{"VWCE.DE", "asd"}
 
-	// TODO: completely remove colly & simply use standard lib http
-	collector := colly.NewCollector()
-	configure(collector)
-
-	etfs := getEtfData(collector, symbols)
+	etfs := getEtfData(symbols)
 
 	fmt.Printf("%+v\n", etfs)
 
 }
 
-func configure(collector *colly.Collector) {
-	collector.OnError(func(r *colly.Response, err error) {
-		fmt.Println("Request to URL '", r.Request.URL, "' failed with response '", r, "'\nError:", err)
-	})
+func createRequest(symbol string) (*http.Request, error) {
+	u := buildUrl(symbol)
+	r, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	uParsed, err := url.Parse(u)
+	if err != nil {
+		return nil, err
+	}
+
+	r.Host = uParsed.Host
+	r.Header.Add("User-Agent", "github.com/diogosilva96/etf-scraper")
+	return r, nil
 }
 
-func getEtfData(collector *colly.Collector, symbols []string) []Etf {
+func getEtfData(symbols []string) []Etf {
+
+	client := &http.Client{}
 	etfs := make([]Etf, 0, len(symbols))
 
-	collector.OnResponse(func(r *colly.Response) {
-		reader := bytes.NewReader(r.Body)
-		document, err := goquery.NewDocumentFromReader(reader)
+	for _, symbol := range symbols {
+		document, err := getDocument(symbol, client)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Printf("Something went wrong when fetching the data for symbol '%s'. Error details: %s", symbol, err)
 		}
 
-		symbol := strings.Split(r.Request.URL.Path, "/")[2]
 		etf, err := scrapeEtf(document, symbol)
 		if err != nil {
-			fmt.Println(err)
-		} else {
-			etfs = append(etfs, *etf)
+			fmt.Printf("Something went wrong when scraping the data for symbol '%s'. Error details: %s", symbol, err)
+			continue
 		}
-	})
-
-	visitUrls(symbols, collector)
+		etfs = append(etfs, *etf)
+	}
 
 	return etfs
 }
 
-func visitUrls(symbols []string, collector *colly.Collector) {
-	for _, symbol := range symbols {
-		url := buildUrl(symbol)
-		collector.Visit(url)
+func getDocument(symbol string, client *http.Client) (*goquery.Document, error) {
+	req, err := createRequest(symbol)
+	if err != nil {
+		return nil, err
 	}
+	resp, err := client.Do(req)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	document, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return document, nil
 }
 
 func scrapeEtf(document *goquery.Document, symbol string) (*Etf, error) {
