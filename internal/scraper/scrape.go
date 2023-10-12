@@ -29,7 +29,7 @@ func createRequest(symbol string) (*http.Request, error) {
 	return r, nil
 }
 
-// Scrapes the specified symbols and returns the slice of the scraped etfs
+// Scrapes the ETFs for the specified symbols and returns a slice of the scraped etfs.
 func Scrape(symbols []string) []Etf {
 
 	client := &http.Client{}
