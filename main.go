@@ -19,6 +19,7 @@ func main() {
 
 	fmt.Printf("\n%+v\n", cfg)
 
+	// TODO: add way to validate if an etf being added is valid (scrape to see if it can be found by the symbol)
 	etfs := scrape(&cfg)
 
 	fmt.Printf("\n%+v\n", etfs)
