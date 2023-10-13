@@ -8,6 +8,6 @@ Simple ETF scraper application.
 - Add pretty etf/history display
 - Add local storage in json to keep track of the etf symbols.
 - Add cli commands:
-  - `etf track "VWCE.DE"`
+  - `etf follow "VWCE.DE"`
   - `etf fetch`
-  - `etf untrack "VWCE.DE"`
+  - `etf unfollow "VWCE.DE"`
