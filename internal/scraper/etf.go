@@ -1,6 +1,6 @@
 package scraper
 
-// Represents an ETF
+// Represents an Etf
 type Etf struct {
 	Symbol, Price string
 	History       []EtfHistory

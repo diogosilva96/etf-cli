@@ -4,6 +4,7 @@ import "fmt"
 
 const (
 	errorColor   string = "\033[1;31m%s\033[0m"
+	infoColor           = "\033[1;34m%s\033[0m"
 	warningColor        = "\033[1;33m%s\033[0m"
 )
 
@@ -17,6 +18,12 @@ func PrintError(format string, a ...any) (int, error) {
 // It returns the number of bytes written and any write error encountered.
 func PrintWarning(format string, a ...any) (int, error) {
 	return fmt.Printf(warningColor, fmt.Sprintf(format, a...))
+}
+
+// PrintInfo formats an information according to a format specifier and writes it to standard output.
+// It returns the number of bytes written and any write error encountered.
+func PrintInfo(format string, a ...any) (int, error) {
+	return fmt.Printf(infoColor, fmt.Sprintf(format, a...))
 }
 
 // Print formats according to a format specifier and writes it to standard output.

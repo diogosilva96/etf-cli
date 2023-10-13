@@ -9,35 +9,29 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/diogosilva96/etf-scraper/internal/printer"
 )
 
-// Scrapes the ETFs for the specified symbols and returns a slice of the scraped etfs.
-func Scrape(symbols []string) []Etf {
+const (
+	baseUrl   = "https://finance.yahoo.com"
+	userAgent = "github.com/diogosilva96/etf-scraper"
+)
 
-	client := &http.Client{}
-	etfs := make([]Etf, 0, len(symbols))
+var client = &http.Client{}
 
-	for _, symbol := range symbols {
-		document, err := getDocument(symbol, client)
-		if err != nil {
-
-			printer.PrintWarning("[%s] Something went wrong when fetching the data. Error details: %s\n", symbol, err)
-		}
-
-		etf, err := scrape(document, symbol)
-		if err != nil {
-			printer.PrintWarning("[%s] Something went wrong when scraping the data. Error details: %s\n", symbol, err)
-			continue
-		}
-		etfs = append(etfs, *etf)
+// Scrapes the ETF for the named symbol and returns the scraped ETF.
+func Scrape(symbol string) (*Etf, error) {
+	document, err := getDocument(symbol, client)
+	if err != nil {
+		return nil, err
 	}
 
-	return etfs
-}
+	etf, err := scrape(document, symbol)
+	if err != nil {
+		return nil, err
+	}
 
-const baseUrl = "https://finance.yahoo.com"
-const userAgent = "github.com/diogosilva96/etf-scraper"
+	return etf, err
+}
 
 func createRequest(symbol string) (*http.Request, error) {
 	u := buildUrl(symbol)
