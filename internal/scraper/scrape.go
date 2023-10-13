@@ -79,18 +79,18 @@ func getDocument(symbol string, client *http.Client) (*goquery.Document, error) 
 
 func scrape(document *goquery.Document, symbol string) (*Etf, error) {
 	etf := Etf{}
-	etf.symbol = symbol
+	etf.Symbol = symbol
 	var price = document.Find(fmt.Sprintf("fin-streamer[data-symbol=\"%s\"][data-test=\"qsp-price\"]", symbol)).Text()
 	if len(price) <= 0 {
 		return nil, errors.New(fmt.Sprintf("Could not find etf with symbol '%s'", symbol))
 	}
-	etf.price = price
+	etf.Price = price
 
 	history, err := scrapeHistory(document)
 	if err != nil {
 		return nil, err
 	}
-	etf.history = history
+	etf.History = history
 
 	return &etf, nil
 }
@@ -128,15 +128,15 @@ func scrapeHistory(document *goquery.Document) ([]EtfHistory, error) {
 		rowSelection.Children().Each(func(col int, colSelection *goquery.Selection) {
 
 			if col == priceIndex {
-				h.price = colSelection.Text()
+				h.Price = colSelection.Text()
 			}
 
 			if col == dateIndex {
-				h.date = colSelection.Text()
+				h.Date = colSelection.Text()
 			}
 
 		})
-		if len(h.price) > 0 && len(h.date) > 0 {
+		if len(h.Price) > 0 && len(h.Date) > 0 {
 			history = append(history, h)
 		}
 	})
