@@ -19,7 +19,6 @@ func Parse(filePath string) (*Config, error) {
 	}
 
 	var config Config
-
 	err = json.Unmarshal(data, &config)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("The file '%s' could not be parsed. Details: %s", filePath, err))

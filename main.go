@@ -12,27 +12,16 @@ const (
 	configPath = "config.json"
 )
 
-var cfg config.Config
-var defaultCfg config.Config = config.Config{Symbols: []string{"VWCE.DE"}}
-
 func main() {
 
-	// TODO: make this a cli tool and allow removing/adding symbols
 	cfg := getOrCreateConfig()
+	// TODO: make this a cli tool and allow removing/adding symbols
 
-	etfs := scrape(cfg)
+	fmt.Printf("\n%+v\n", cfg)
+
+	etfs := scrape(&cfg)
 
 	fmt.Printf("\n%+v\n", etfs)
-}
-
-func getOrCreateConfig() *config.Config {
-	cfg, err := config.Parse(configPath)
-	if err != nil {
-		printer.PrintWarning("The config in path '%s' could not be found or parsed. Details: %s\nFalling back to default configuration.\n", configPath, err.Error())
-		cfg = &defaultCfg
-		cfg.Save(configPath)
-	}
-	return cfg
 }
 
 func scrape(cfg *config.Config) []scraper.Etf {
@@ -49,4 +38,14 @@ func scrape(cfg *config.Config) []scraper.Etf {
 	}
 	fmt.Print("Scraping complete.\n")
 	return etfs
+}
+
+func getOrCreateConfig() config.Config {
+	c, err := config.Parse(configPath)
+	if err != nil {
+		printer.PrintWarning("The config in path '%s' could not be found or parsed. Details: %s\nFalling back to default configuration.\n", configPath, err.Error())
+		c = &config.DefaultConfig
+		c.Save(configPath)
+	}
+	return *c
 }
