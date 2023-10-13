@@ -1,13 +1,13 @@
-# etf-scraper
+# etf-cli
 
-Simple ETF scraper application.
+Simple ETF cli application that scrapes some etf data.
 
 ## TODO
 
-- Improve error messages
-- Add pretty etf/history display
-- Add local storage in json to keep track of the etf symbols.
+- Add pretty etf/history display. Add metrics (e.g, dif last 5 days, dif last 30 days, etc.)
+- Add symbol validation to ensure it exists
 - Add cli commands:
   - `etf follow "VWCE.DE"`
   - `etf fetch`
   - `etf unfollow "VWCE.DE"`
+- Run ETF scraping with go routines in parallel.
