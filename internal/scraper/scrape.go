@@ -22,12 +22,12 @@ func Scrape(symbols []string) []Etf {
 		document, err := getDocument(symbol, client)
 		if err != nil {
 
-			printer.PrintWarning("Something went wrong when fetching the data for symbol '%s'. Error details: %s\n", symbol, err)
+			printer.PrintWarning("[%s] Something went wrong when fetching the data. Error details: %s\n", symbol, err)
 		}
 
 		etf, err := scrape(document, symbol)
 		if err != nil {
-			printer.PrintWarning("Something went wrong when parsing the data for symbol '%s'. Error details: %s\n", symbol, err)
+			printer.PrintWarning("[%s] Something went wrong when scraping the data. Error details: %s\n", symbol, err)
 			continue
 		}
 		etfs = append(etfs, *etf)
