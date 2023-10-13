@@ -3,11 +3,13 @@ package scraper
 import (
 	"errors"
 	"fmt"
+
 	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/diogosilva96/etf-scraper/internal/printer"
 )
 
 // Scrapes the ETFs for the specified symbols and returns a slice of the scraped etfs.
@@ -19,12 +21,13 @@ func Scrape(symbols []string) []Etf {
 	for _, symbol := range symbols {
 		document, err := getDocument(symbol, client)
 		if err != nil {
-			fmt.Printf("Something went wrong when fetching the data for symbol '%s'. Error details: %s\n", symbol, err)
+
+			printer.PrintWarning("Something went wrong when fetching the data for symbol '%s'. Error details: %s\n", symbol, err)
 		}
 
 		etf, err := scrape(document, symbol)
 		if err != nil {
-			fmt.Printf("Something went wrong when parsing the data for symbol '%s'. Error details: %s\n", symbol, err)
+			printer.PrintWarning("Something went wrong when parsing the data for symbol '%s'. Error details: %s\n", symbol, err)
 			continue
 		}
 		etfs = append(etfs, *etf)
