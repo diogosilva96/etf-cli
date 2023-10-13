@@ -4,7 +4,7 @@ import "fmt"
 
 const (
 	errorColor   string = "\033[1;31m%s\033[0m"
-	infoColor           = "\033[1;34m%s\033[0m"
+	infoColor           = "\033[1;36m%s\033[0m"
 	warningColor        = "\033[1;33m%s\033[0m"
 )
 
