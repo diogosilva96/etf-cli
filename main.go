@@ -18,20 +18,21 @@ var defaultCfg config.Config = config.Config{Symbols: []string{"VWCE.DE"}}
 func main() {
 
 	// TODO: make this a cli tool and allow removing/adding symbols
+	cfg := getOrCreateConfig()
 
+	etfs := scrape(cfg)
+
+	fmt.Printf("\n%+v\n", etfs)
+}
+
+func getOrCreateConfig() *config.Config {
 	cfg, err := config.Parse(configPath)
-
 	if err != nil {
 		printer.PrintWarning("The config in path '%s' could not be found or parsed. Details: %s\nFalling back to default configuration.\n", configPath, err.Error())
 		cfg = &defaultCfg
 		cfg.Save(configPath)
 	}
-
-	fmt.Printf("%+v\n", cfg)
-
-	etfs := scrape(cfg)
-
-	fmt.Printf("\n%+v\n", etfs)
+	return cfg
 }
 
 func scrape(cfg *config.Config) []scraper.Etf {
