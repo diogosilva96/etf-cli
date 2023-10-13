@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/diogosilva96/etf-scraper/internal/config"
+	"github.com/diogosilva96/etf-scraper/internal/printer"
 	"github.com/diogosilva96/etf-scraper/internal/scraper"
 )
 
@@ -14,7 +15,14 @@ func main() {
 	// TODO: make this a cli tool and allow removing/adding symbols
 	symbols := []string{"VWCE.DE", "asd"}
 
-	config.Read("config.json")
+	config, err := config.Parse("config.json")
+
+	if err != nil {
+		printer.PrintError(err.Error())
+		return
+	}
+
+	fmt.Printf("%+v\n", config)
 
 	etfs := scraper.Scrape(symbols)
 
