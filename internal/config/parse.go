@@ -18,11 +18,15 @@ func Parse(filePath string) (*Config, error) {
 		return nil, errors.New(fmt.Sprintf("The file '%s' could not be read. Details: %s", filePath, err))
 	}
 
-	var config Config
+	config, err := NewConfig()
+	if err != nil {
+		return nil, err
+	}
+
 	err = json.Unmarshal(data, &config)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("The file '%s' could not be parsed. Details: %s", filePath, err))
 	}
 
-	return &config, nil
+	return config, nil
 }

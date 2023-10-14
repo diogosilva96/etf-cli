@@ -14,7 +14,7 @@ const (
 
 func main() {
 
-	cfg := getOrCreateConfig()
+	cfg := initConfig(configPath)
 	// TODO: make this a cli tool and allow removing/adding symbols
 
 	fmt.Printf("\n%+v\n", cfg)
@@ -41,12 +41,12 @@ func scrape(cfg *config.Config) []scraper.Etf {
 	return etfs
 }
 
-func getOrCreateConfig() config.Config {
-	c, err := config.Parse(configPath)
+func initConfig(filePath string) config.Config {
+	c, err := config.Parse(filePath)
 	if err != nil {
-		printer.PrintWarning("The config in path '%s' could not be found or parsed. Details: %s\nFalling back to default configuration.\n", configPath, err.Error())
-		c = &config.DefaultConfig
-		c.Save(configPath)
+		printer.PrintWarning("The config in path '%s' could not be found or parsed. Details: %s\nFalling back to default configuration.\n", filePath, err.Error())
+		c, err = config.NewConfig(config.WithSymbols("VWCE.DE", "VWCE.MI"))
+		c.Save(filePath)
 	}
 	return *c
 }
