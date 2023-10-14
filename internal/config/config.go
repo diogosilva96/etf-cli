@@ -10,7 +10,7 @@ import (
 
 // Represents a config.
 type Config struct {
-	Symbols []string
+	Symbols []string `json:"symbols"`
 }
 
 // Represents a config option.
