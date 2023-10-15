@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/diogosilva96/etf-scraper/internal/app"
 	"github.com/diogosilva96/etf-scraper/internal/printer"
 	"github.com/spf13/cobra"
 )
@@ -17,21 +16,20 @@ var symbolAddCmd = &cobra.Command{
 	The added ETF symbol will be included in the fetched ETF data when the 'get' command is executed.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		etfApp := app.GetOrCreateEtfApp() // TODO: rework this
 		symbol := args[0]
-		err := addSymbol(etfApp, symbol)
+		err := addSymbol(symbol)
 		if err != nil {
 			printer.PrintWarning(err.Error())
 		}
 	},
 }
 
-func addSymbol(etfApp app.EtfApp, symbol string) error {
-	if etfApp.Config.HasSymbol(symbol) {
+func addSymbol(symbol string) error {
+	if c.HasSymbol(symbol) {
 		return errors.New(fmt.Sprintf("The symbol '%s' was not added to the tracked list, because it is already being tracked.", symbol))
 	}
-	etfApp.Config.AddSymbol(symbol)
-	err := etfApp.Config.Save(app.ConfigPath)
+	c.AddSymbol(symbol)
+	err := c.Save(ConfigPath)
 	if err != nil {
 		return err
 	}

@@ -4,8 +4,16 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/diogosilva96/etf-scraper/internal/config"
 	"github.com/spf13/cobra"
 )
+
+const (
+	ConfigPath = "config.json"
+)
+
+// Represents the configuration for the cmd module.
+var c *config.Config
 
 var rootCmd = &cobra.Command{
 	Use:   "etf",
@@ -16,7 +24,9 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-func Execute() {
+// Run runs the CLI application.
+func Run(cfg *config.Config) {
+	c = cfg
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintf(os.Stderr, "Whoops. There was an error while executing your CLI '%s'", err)
 		os.Exit(1)

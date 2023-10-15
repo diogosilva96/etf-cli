@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/diogosilva96/etf-scraper/internal/app"
 	"github.com/diogosilva96/etf-scraper/internal/printer"
 	"github.com/diogosilva96/etf-scraper/internal/scraper"
 	"github.com/spf13/cobra"
@@ -15,24 +14,24 @@ var getCmd = &cobra.Command{
 	Short: "Retrieve ETF data based on the tracked ETF symbols.",
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-		etfApp := app.GetOrCreateEtfApp() // TODO: rework this
-		etfs := scrape(etfApp)
+
+		etfs := scrape()
 
 		fmt.Printf("\n%+v\n", etfs)
 	},
 }
 
-func scrape(app app.EtfApp) []scraper.Etf {
+func scrape() []scraper.Etf {
 	type result struct {
 		symbol string
 		etf    *scraper.Etf
 		err    error
 	}
 
-	ch := make(chan result, len(app.Config.Symbols))
+	ch := make(chan result, len(c.Symbols))
 	wg := sync.WaitGroup{}
 	printer.Print("Scraping data...\n")
-	for _, s := range app.Config.Symbols {
+	for _, s := range c.Symbols {
 		wg.Add(1)
 		go func(symbol string) {
 			defer wg.Done()
@@ -41,7 +40,7 @@ func scrape(app app.EtfApp) []scraper.Etf {
 			ch <- r
 		}(s)
 	}
-	etfs := make([]scraper.Etf, 0, len(app.Config.Symbols))
+	etfs := make([]scraper.Etf, 0, len(c.Symbols))
 	wg.Wait()
 	close(ch)
 
