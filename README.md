@@ -8,4 +8,4 @@ Simple ETF cli application that scrapes some etf data.
 - Add symbol validation to ensure it exists
 - Tidy up error handling
 - Move each command to a specific file in app module.
-- Rewrite with `spf13/cobra` instead (seems simpler)
+- Rethink app configuration
