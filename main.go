@@ -1,10 +1,7 @@
 package main
 
 import (
-	"log"
-	"os"
-
-	"github.com/diogosilva96/etf-scraper/internal/app"
+	"github.com/diogosilva96/etf-scraper/internal/cmd"
 )
 
 const (
@@ -12,9 +9,5 @@ const (
 )
 
 func main() {
-	app := app.GetOrCreateEtfApp()
-	err := app.Run(os.Args)
-	if err != nil {
-		log.Fatal(err)
-	}
+	cmd.Execute()
 }
