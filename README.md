@@ -11,4 +11,3 @@ Simple ETF cli application that scrapes some etf data.
   - `etf list`
   - `etf fetch`
   - `etf untrack "VWCE.DE"`
-- Run ETF scraping with go routines in parallel.
