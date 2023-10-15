@@ -26,8 +26,9 @@ var lock = &sync.Mutex{}
 
 var etfApp *EtfApp
 
-// NewEtfApp creates a new etf application.
-func NewEtfApp() EtfApp {
+// GetOrCreateEtfApp gets or creates a new etf application.
+func GetOrCreateEtfApp() EtfApp {
+	// TODO: This logic might make more sense to be in main.go - this also makes it so that we can remove the sync mechanism
 	if etfApp == nil {
 		lock.Lock()
 		defer lock.Unlock()
@@ -37,27 +38,60 @@ func NewEtfApp() EtfApp {
 			app.Usage = "Let's you get, track & untrack ETFs."
 			app.Commands = []cli.Command{
 				{
-					Name:        "track",
-					HelpName:    "track",
-					Action:      trackAction,
-					ArgsUsage:   "",
-					Usage:       "Adds the ETF to the tracked list based on its symbol.",
-					Description: "Starts tracking the ETF. When the `get` command is run this ETF's data will also be retrieved.",
-					Flags: []cli.Flag{
-						&cli.StringFlag{
-							Name:     symbolArgName,
-							Usage:    "track ETF by symbol. ",
-							Required: false,
-						},
-					},
+					Name:      "get",
+					HelpName:  "get",
+					Action:    getAction,
+					ArgsUsage: "",
+					Usage:     "Retrieves the information for all the ETFs in the tracked list.",
 				},
 				{
-					Name:        "get",
-					HelpName:    "get",
-					Action:      getAction,
-					ArgsUsage:   "",
-					Usage:       "Retrieves the information for all the ETFs in the tracked list.",
-					Description: "Retrieves the information for all the ETFs in the tracked list.",
+					Name:      "track",
+					HelpName:  "track",
+					Action:    trackAddAction,
+					ArgsUsage: "",
+					Usage:     "Options for the track list.",
+					Subcommands: []cli.Command{
+						{
+							Name:      "list",
+							HelpName:  "list",
+							Aliases:   []string{"l"},
+							Action:    trackListAction,
+							ArgsUsage: "",
+							Usage:     "Displays the list of tracked ETF symbols.",
+						},
+						{
+							Name:        "add",
+							HelpName:    "add",
+							Aliases:     []string{"a"},
+							Action:      trackAddAction,
+							ArgsUsage:   "",
+							Usage:       "Adds the specified ETF symbol to the tracked list.",
+							Description: "Add the ETF to the tracked list. When the `get` command is run the ETF's data will be included.",
+							Flags: []cli.Flag{
+								&cli.StringFlag{
+									Name:     symbolArgName,
+									Usage:    "add ETF symbol to the tracked list. ",
+									Required: false,
+								},
+							},
+						},
+						{
+							Name:        "remove",
+							HelpName:    "remove",
+							Aliases:     []string{"r"},
+							Action:      trackRemoveAction,
+							ArgsUsage:   "",
+							Usage:       "Removes the ETF symbol from the tracked list.",
+							Description: "Removes the ETF from the tracked list. When the `get` command is run the removed ETF's data will no longer be included.",
+							Flags: []cli.Flag{
+								&cli.StringFlag{
+									Name:     symbolArgName,
+									Usage:    "untrack ETF by symbol. ",
+									Required: false,
+								},
+							},
+						},
+					},
 				},
 			}
 
@@ -76,6 +110,65 @@ func getAction(c *cli.Context) error {
 
 	fmt.Printf("\n%+v\n", etfs)
 	return nil
+}
+
+func trackListAction(c *cli.Context) error {
+	if len(c.Args()) > 0 {
+		return errors.New("No arguments were expected.")
+	}
+	printTrackedList(*etfApp)
+	return nil
+}
+
+func trackAddAction(c *cli.Context) error {
+	if len(c.Args()) == 1 && !c.IsSet(symbolArgName) {
+		symbol := c.Args()[0]
+		err := track(*etfApp, symbol)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+
+	if c.IsSet(symbolArgName) {
+		symbol := c.String(symbolArgName)
+		err := track(*etfApp, symbol)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+
+	return errors.New("Invalid number of arguments.")
+}
+
+func trackRemoveAction(c *cli.Context) error {
+	if len(c.Args()) == 1 && !c.IsSet(symbolArgName) {
+		symbol := c.Args()[0]
+		err := untrack(*etfApp, symbol)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+
+	if c.IsSet(symbolArgName) {
+		symbol := c.String(symbolArgName)
+		err := untrack(*etfApp, symbol)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+
+	return errors.New("Invalid number of arguments.")
+}
+
+func printTrackedList(app EtfApp) {
+	printer.Print("Tracked ETFs:\n")
+	for _, s := range app.Config.Symbols {
+		printer.Print("- %s\n", s)
+	}
 }
 
 func scrape(app EtfApp) []scraper.Etf {
@@ -113,28 +206,6 @@ func scrape(app EtfApp) []scraper.Etf {
 	return etfs
 }
 
-func trackAction(c *cli.Context) error {
-	if len(c.Args()) == 1 && !c.IsSet(symbolArgName) {
-		symbol := c.Args()[0]
-		err := track(*etfApp, symbol)
-		if err != nil {
-			return err
-		}
-		return nil
-	}
-
-	if c.IsSet(symbolArgName) {
-		symbol := c.String(symbolArgName)
-		err := track(*etfApp, symbol)
-		if err != nil {
-			return err
-		}
-		return nil
-	}
-
-	return errors.New("Invalid number of arguments.")
-}
-
 func track(app EtfApp, symbol string) error {
 	if app.Config.HasSymbol(symbol) {
 		return errors.New(fmt.Sprintf("The symbol '%s' was not added to the tracked list, because it is already being tracked.", symbol))
@@ -144,6 +215,20 @@ func track(app EtfApp, symbol string) error {
 	if err != nil {
 		return err
 	}
+	printer.Print("'%s' was successfully added to the tracked list.", symbol)
+	return nil
+}
+
+func untrack(app EtfApp, symbol string) error {
+	err := app.Config.RemoveSymbol(symbol)
+	if err != nil {
+		return err
+	}
+	err = app.Config.Save(configPath)
+	if err != nil {
+		return err
+	}
+	printer.Print("'%s' was successfully removed from the tracked list.", symbol)
 	return nil
 }
 

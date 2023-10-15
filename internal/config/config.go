@@ -40,6 +40,22 @@ func (config *Config) AddSymbol(symbol string) error {
 	return nil
 }
 
+// RemoveSymbol removes the named symbol from the config.
+func (config *Config) RemoveSymbol(symbol string) error {
+	if len(strings.TrimSpace(symbol)) == 0 {
+		return nil
+	}
+
+	for i, s := range config.Symbols {
+		if strings.EqualFold(s, symbol) {
+			config.Symbols = append(config.Symbols[:i], config.Symbols[i+1:]...)
+			return nil
+		}
+	}
+
+	return errors.New(fmt.Sprintf("The symbol '%s' does not exist in the tracked list.", symbol))
+}
+
 // Save writes the config data to the named file path, creating it if necessary.
 func (config *Config) Save(filePath string) error {
 	data, err := json.MarshalIndent(config, "", " ")

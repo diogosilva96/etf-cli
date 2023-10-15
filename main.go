@@ -12,7 +12,7 @@ const (
 )
 
 func main() {
-	app := app.NewEtfApp()
+	app := app.GetOrCreateEtfApp()
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)
