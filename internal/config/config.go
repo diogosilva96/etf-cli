@@ -16,8 +16,8 @@ type Config struct {
 // Represents a config option.
 type ConfigOption func(c *Config) error
 
-// Contains checks whether the Config contains the named symbol.
-func (config *Config) Contains(symbol string) bool {
+// HasSymbol checks whether the Config has the named symbol.
+func (config *Config) HasSymbol(symbol string) bool {
 	for _, s := range config.Symbols {
 		if strings.EqualFold(s, symbol) {
 			return true
@@ -26,13 +26,13 @@ func (config *Config) Contains(symbol string) bool {
 	return false
 }
 
-// Adds the named symbol to the config.
-func (config *Config) Add(symbol string) error {
+// AddSymbol adds the named symbol to the config.
+func (config *Config) AddSymbol(symbol string) error {
 	if len(strings.TrimSpace(symbol)) == 0 {
 		return errors.New("Cannot add empty symbol.")
 	}
 
-	if config.Contains(symbol) {
+	if config.HasSymbol(symbol) {
 		return nil
 	}
 
@@ -72,7 +72,7 @@ func NewConfig(options ...ConfigOption) (*Config, error) {
 func WithSymbols(symbols ...string) ConfigOption {
 	return func(c *Config) error {
 		for _, s := range symbols {
-			err := c.Add(s)
+			err := c.AddSymbol(s)
 			if err != nil {
 				return err
 			}
