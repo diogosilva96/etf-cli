@@ -9,7 +9,7 @@ import (
 var symbolListCmd = &cobra.Command{
 	Use:     "list",
 	Aliases: []string{"l"},
-	Short:   "lists the ETF symbols in the tracked list.",
+	Short:   "Lists the ETF symbols in the tracked list.",
 	Args:    cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		etfApp := app.GetOrCreateEtfApp() // TODO: rework this

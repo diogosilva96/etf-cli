@@ -46,4 +46,3 @@ func initConfig() config.Config {
 	}
 	return *c
 }
-g
