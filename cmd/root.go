@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/diogosilva96/etf-scraper/internal/config"
+	"github.com/diogosilva96/etf-scraper/config"
 	"github.com/spf13/cobra"
 )
 

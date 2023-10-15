@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/diogosilva96/etf-scraper/internal/cmd"
-	"github.com/diogosilva96/etf-scraper/internal/config"
-	"github.com/diogosilva96/etf-scraper/internal/printer"
+	"github.com/diogosilva96/etf-scraper/cmd"
+	"github.com/diogosilva96/etf-scraper/config"
+	"github.com/diogosilva96/etf-scraper/printer"
 )
 
 var cfg *config.Config

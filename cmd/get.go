@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/diogosilva96/etf-scraper/internal/printer"
-	"github.com/diogosilva96/etf-scraper/internal/scraper"
+	"github.com/diogosilva96/etf-scraper/printer"
+	"github.com/diogosilva96/etf-scraper/scraper"
 	"github.com/spf13/cobra"
 )
 

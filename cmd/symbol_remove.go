@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/diogosilva96/etf-scraper/internal/printer"
+	"github.com/diogosilva96/etf-scraper/printer"
 	"github.com/spf13/cobra"
 )
 
