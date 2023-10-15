@@ -49,7 +49,7 @@ func GetOrCreateEtfApp() EtfApp {
 					HelpName:  "track",
 					Action:    trackAddAction,
 					ArgsUsage: "",
-					Usage:     "Options for the track list.",
+					Usage:     "Options for the tracked list.",
 					Subcommands: []cli.Command{
 						{
 							Name:      "list",
