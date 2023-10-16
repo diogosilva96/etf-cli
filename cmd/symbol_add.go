@@ -8,20 +8,25 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var symbolAddCmd = &cobra.Command{
-	Use:     "add",
-	Aliases: []string{"a"},
-	Short:   "Adds the specified ETF symbol to the tracked list.",
-	Long: `Adds the specified ETF symbol to the tracked list.
-	The added ETF symbol will be included in the fetched ETF data when the 'get' command is executed.`,
-	Args: cobra.ExactArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		symbol := args[0]
-		err := addSymbol(symbol)
-		if err != nil {
-			printer.PrintWarning(err.Error())
-		}
-	},
+func NewSymbolAddCmd() *cobra.Command {
+	cmd := cobra.Command{
+		Use:     "add",
+		Aliases: []string{"a"},
+		Short:   "Adds the specified ETF symbol to the tracked list.",
+		Long: `Adds the specified ETF symbol to the tracked list.
+		The added ETF symbol will be included in the fetched ETF data when the 'get' command is executed.`,
+		Args: cobra.ExactArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Printf("\n%+v\n", args)
+			symbol := args[0]
+			err := addSymbol(symbol)
+			if err != nil {
+				printer.PrintWarning(err.Error())
+			}
+		},
+	}
+
+	return &cmd
 }
 
 func addSymbol(symbol string) error {
@@ -35,8 +40,4 @@ func addSymbol(symbol string) error {
 	}
 	printer.Print("'%s' was successfully added to the tracked list.", symbol)
 	return nil
-}
-
-func init() {
-	symbolRootCmd.AddCommand(symbolAddCmd)
 }

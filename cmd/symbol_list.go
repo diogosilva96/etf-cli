@@ -5,14 +5,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var symbolListCmd = &cobra.Command{
-	Use:     "list",
-	Aliases: []string{"l"},
-	Short:   "Lists the ETF symbols in the tracked list.",
-	Args:    cobra.ExactArgs(0),
-	Run: func(cmd *cobra.Command, args []string) {
-		listSymbols()
-	},
+func NewSymbolListCmd() *cobra.Command {
+	cmd := cobra.Command{
+		Use:     "list",
+		Aliases: []string{"l"},
+		Short:   "Lists the ETF symbols in the tracked list.",
+		Args:    cobra.ExactArgs(0),
+		Run: func(cmd *cobra.Command, args []string) {
+			listSymbols()
+		},
+	}
+
+	return &cmd
 }
 
 func listSymbols() {
@@ -20,8 +24,4 @@ func listSymbols() {
 	for _, s := range c.Symbols {
 		printer.Print("- %s\n", s)
 	}
-}
-
-func init() {
-	symbolRootCmd.AddCommand(symbolListCmd)
 }

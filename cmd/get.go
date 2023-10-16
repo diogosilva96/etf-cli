@@ -9,16 +9,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var getCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Retrieve ETF data based on the tracked ETF symbols.",
-	Args:  cobra.ExactArgs(0),
-	Run: func(cmd *cobra.Command, args []string) {
+func NewGetCmd() *cobra.Command {
 
-		etfs := scrape()
+	cmd := cobra.Command{
+		Use:   "get",
+		Short: "Retrieve ETF data based on the tracked ETF symbols.",
+		Args:  cobra.ExactArgs(0),
+		Run: func(cmd *cobra.Command, args []string) {
 
-		fmt.Printf("\n%+v\n", etfs)
-	},
+			etfs := scrape()
+
+			fmt.Printf("\n%+v\n", etfs)
+		},
+	}
+
+	return &cmd
+
 }
 
 func scrape() []scraper.Etf {
@@ -54,8 +60,4 @@ func scrape() []scraper.Etf {
 	}
 	printer.Print("Scraping complete.\n")
 	return etfs
-}
-
-func init() {
-	rootCmd.AddCommand(getCmd)
 }

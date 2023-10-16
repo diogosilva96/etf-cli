@@ -5,20 +5,24 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var symbolRemoveCmd = &cobra.Command{
-	Use:     "remove",
-	Aliases: []string{"r"},
-	Short:   "Removes the specified ETF symbol from the tracked list.",
-	Long: `Removes the specified ETF symbol to the tracked list.
-	The remove ETF symbol will no longer be included in the fetched ETF data when the 'get' command is executed.`,
-	Args: cobra.ExactArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		symbol := args[0]
-		err := removeSymbol(symbol)
-		if err != nil {
-			printer.PrintWarning(err.Error())
-		}
-	},
+func NewSymbolRemoveCmd() *cobra.Command {
+	cmd := cobra.Command{
+		Use:     "remove",
+		Aliases: []string{"r"},
+		Short:   "Removes the specified ETF symbol from the tracked list.",
+		Long: `Removes the specified ETF symbol to the tracked list.
+		The remove ETF symbol will no longer be included in the fetched ETF data when the 'get' command is executed.`,
+		Args: cobra.ExactArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			symbol := args[0]
+			err := removeSymbol(symbol)
+			if err != nil {
+				printer.PrintWarning(err.Error())
+			}
+		},
+	}
+
+	return &cmd
 }
 
 func removeSymbol(symbol string) error {
@@ -32,8 +36,4 @@ func removeSymbol(symbol string) error {
 	}
 	printer.Print("'%s' was successfully removed from the tracked list.", symbol)
 	return nil
-}
-
-func init() {
-	symbolRootCmd.AddCommand(symbolRemoveCmd)
 }
