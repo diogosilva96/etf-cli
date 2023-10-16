@@ -1,7 +1,8 @@
-package cmd
+package symbol
 
 import (
-	"github.com/diogosilva96/etf-scraper/printer"
+	"github.com/diogosilva96/etf-scraper/app"
+	"github.com/diogosilva96/etf-scraper/internal/printer"
 	"github.com/spf13/cobra"
 )
 
@@ -21,7 +22,7 @@ func NewSymbolListCmd() *cobra.Command {
 
 func listSymbols() {
 	printer.Print("Tracked ETFs:\n")
-	for _, s := range c.Symbols {
+	for _, s := range app.Cfg.Symbols {
 		printer.Print("- %s\n", s)
 	}
 }

@@ -1,7 +1,8 @@
-package cmd
+package symbol
 
 import (
-	"github.com/diogosilva96/etf-scraper/printer"
+	"github.com/diogosilva96/etf-scraper/app"
+	"github.com/diogosilva96/etf-scraper/internal/printer"
 	"github.com/spf13/cobra"
 )
 
@@ -26,11 +27,11 @@ func NewSymbolRemoveCmd() *cobra.Command {
 }
 
 func removeSymbol(symbol string) error {
-	err := c.RemoveSymbol(symbol)
+	err := app.Cfg.RemoveSymbol(symbol)
 	if err != nil {
 		return err
 	}
-	err = c.Save(ConfigPath)
+	err = app.Cfg.Save(app.ConfigPath)
 	if err != nil {
 		return err
 	}

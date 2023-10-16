@@ -1,10 +1,11 @@
-package cmd
+package symbol
 
 import (
 	"errors"
 	"fmt"
 
-	"github.com/diogosilva96/etf-scraper/printer"
+	"github.com/diogosilva96/etf-scraper/app"
+	"github.com/diogosilva96/etf-scraper/internal/printer"
 	"github.com/spf13/cobra"
 )
 
@@ -30,11 +31,11 @@ func NewSymbolAddCmd() *cobra.Command {
 }
 
 func addSymbol(symbol string) error {
-	if c.HasSymbol(symbol) {
+	if app.Cfg.HasSymbol(symbol) {
 		return errors.New(fmt.Sprintf("The symbol '%s' was not added to the tracked list, because it is already being tracked.", symbol))
 	}
-	c.AddSymbol(symbol)
-	err := c.Save(ConfigPath)
+	app.Cfg.AddSymbol(symbol)
+	err := app.Cfg.Save(app.ConfigPath)
 	if err != nil {
 		return err
 	}

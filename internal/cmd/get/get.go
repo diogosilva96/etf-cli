@@ -1,11 +1,12 @@
-package cmd
+package get
 
 import (
 	"fmt"
 	"sync"
 
-	"github.com/diogosilva96/etf-scraper/printer"
-	"github.com/diogosilva96/etf-scraper/scraper"
+	"github.com/diogosilva96/etf-scraper/app"
+	"github.com/diogosilva96/etf-scraper/internal/printer"
+	"github.com/diogosilva96/etf-scraper/internal/scraper"
 	"github.com/spf13/cobra"
 )
 
@@ -34,10 +35,10 @@ func scrape() []scraper.Etf {
 		err    error
 	}
 
-	ch := make(chan result, len(c.Symbols))
+	ch := make(chan result, len(app.Cfg.Symbols))
 	wg := sync.WaitGroup{}
 	printer.Print("Scraping data...\n")
-	for _, s := range c.Symbols {
+	for _, s := range app.Cfg.Symbols {
 		wg.Add(1)
 		go func(symbol string) {
 			defer wg.Done()
@@ -46,7 +47,7 @@ func scrape() []scraper.Etf {
 			ch <- r
 		}(s)
 	}
-	etfs := make([]scraper.Etf, 0, len(c.Symbols))
+	etfs := make([]scraper.Etf, 0, len(app.Cfg.Symbols))
 	wg.Wait()
 	close(ch)
 
