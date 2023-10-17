@@ -1,15 +1,11 @@
+/*
+Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+
+*/
 package main
 
-import (
-	"log"
-
-	"github.com/diogosilva96/etf-scraper/app"
-)
+import "github.com/diogosilva96/etf-scraper/cmd"
 
 func main() {
-	cfg, err := app.NewConfig()
-	if err != nil {
-		log.Fatal(err)
-	}
-	app.Run(cfg)
+	cmd.Execute()
 }

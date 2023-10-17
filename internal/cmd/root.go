@@ -9,10 +9,10 @@ import (
 func NewRootCmd() *cobra.Command {
 	cmd := cobra.Command{
 		Use:   "etf",
-		Short: "etf - a simple CLI to retrieve ETF data & manage ETF tracked list.",
+		Short: "etf - a simple CLI to retrieve ETF data reports & manage tracked ETFs.",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-
+			cmd.Help()
 		},
 	}
 
