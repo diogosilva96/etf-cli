@@ -83,6 +83,11 @@ func RemoveEtf(etf string) error {
 	return errors.New(fmt.Sprintf("The etf '%s' could not be found in the configuration.", etf))
 }
 
+// ListEtfs reads the etfs section from the configuration.
+func ListEtfs() []string {
+	return viper.GetStringSlice(etfsKey)
+}
+
 func contains(arr []string, value string) bool {
 	for _, v := range arr {
 		if strings.EqualFold(value, v) {
