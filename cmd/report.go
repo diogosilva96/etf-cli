@@ -12,8 +12,11 @@ import (
 // reportCmd represents the report command
 var reportCmd = &cobra.Command{
 	Use:   "report",
-	Short: "Provides a report containing the up to date information of the ETFs in the tracked list.",
-	Args:  cobra.ExactArgs(0),
+	Short: "Provides a report containing the up to date information of the ETFs in the configuration.",
+	Long: `Provides a report containing the up to date information of the ETFs in the configuration.
+	
+	A report will be generated for each ETF in the configuration.`,
+	Args: cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		generateReport()
 	},
