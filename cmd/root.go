@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/diogosilva96/etf-scraper/cmd/config"
+	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -34,21 +36,12 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
-
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.etf-cli-config.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	cobra.OnInitialize(config.InitConfig)
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+	fmt.Printf("")
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
@@ -58,13 +51,16 @@ func initConfig() {
 		cobra.CheckErr(err)
 
 		viper.AddConfigPath(home)
-		viper.SetConfigType("yaml")
-		viper.SetConfigName(".etf-cli-config")
+		viper.SetConfigType(config.ConfigType)
+		viper.SetConfigName(config.ConfigName)
 		viper.SetDefault("etfs", []string{"VWCE.DE", "VWCE.MI"})
 		viper.SafeWriteConfig()
 	}
 
-	viper.AutomaticEnv() // read in environment variables that match
+	viper.OnConfigChange(func(e fsnotify.Event) {
+		fmt.Println("Config file changed:", e.Name)
+	})
+	viper.WatchConfig()
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err != nil {
