@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/diogosilva96/etf-scraper/cmd/config"
-	"github.com/diogosilva96/etf-scraper/cmd/scraper"
+	"github.com/diogosilva96/etf-cli/cmd/config"
+	"github.com/diogosilva96/etf-cli/cmd/scraper"
 	"github.com/spf13/cobra"
 )
 

@@ -14,7 +14,7 @@ import (
 
 const (
 	baseUrl   = "https://finance.yahoo.com"
-	userAgent = "github.com/diogosilva96/etf-scraper"
+	userAgent = "github.com/diogosilva96/etf-cli"
 )
 
 var client = &http.Client{}
