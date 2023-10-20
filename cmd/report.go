@@ -2,7 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"sync"
 
+	"github.com/diogosilva96/etf-scraper/cmd/config"
+	"github.com/diogosilva96/etf-scraper/cmd/scraper"
 	"github.com/spf13/cobra"
 )
 
@@ -12,20 +15,46 @@ var reportCmd = &cobra.Command{
 	Short: "Provides a report containing the up to date information of the ETFs in the tracked list.",
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("report called")
+		generateReport()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(reportCmd)
+}
 
-	// Here you will define your flags and configuration settings.
+func generateReport() {
+	type result struct {
+		symbol string
+		etf    *scraper.Etf
+		err    error
+	}
+	etfs := config.ListEtfs()
+	ch := make(chan result, len(etfs))
+	wg := sync.WaitGroup{}
+	fmt.Printf("Scraping data...\n")
+	for _, s := range etfs {
+		wg.Add(1)
+		go func(symbol string) {
+			defer wg.Done()
+			etf, err := scraper.Scrape(symbol)
+			r := result{symbol: symbol, etf: etf, err: err}
+			ch <- r
+		}(s)
+	}
+	etfData := make([]scraper.Etf, 0, len(etfs))
+	wg.Wait()
+	close(ch)
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// reportCmd.PersistentFlags().String("foo", "", "A help for foo")
+	for r := range ch {
+		if r.err != nil {
+			fmt.Printf("[%s] Something went wrong while scraping the data. Error details: %s\n", r.symbol, r.err)
+			continue
+		}
+		etfData = append(etfData, *r.etf)
+		fmt.Printf("[%s] Success!\n", r.symbol)
+	}
+	fmt.Printf("Scraping complete.\n")
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// reportCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	fmt.Printf("%+v\n", etfData)
 }
