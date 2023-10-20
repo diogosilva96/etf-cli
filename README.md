@@ -8,6 +8,4 @@ Simple ETF cli application that scrapes some etf data.
 - Add symbol validation to ensure it exists
 - Tidy up error handling
 - Move each command to a specific file in app module.
-- Rethink app configuration
-- Improve command error messages 
-- Allow config file path specification?
+- Improve command error messages.
