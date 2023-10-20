@@ -3,40 +3,33 @@ package config
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
-	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 const (
-	ConfigType = "yaml"
-	ConfigName = ".etf-cli-config"
+	configType = "json"
+	configName = ".etf-cli-config"
 	etfsKey    = "etfs"
 )
 
 // InitConfig initializes the configuration.
 func InitConfig() {
-	// Find home directory.
 	home, err := os.UserHomeDir()
 	cobra.CheckErr(err)
 
 	viper.AddConfigPath(home)
-	viper.SetConfigType(ConfigType)
-	viper.SetConfigName(ConfigName)
+	viper.SetConfigType(configType)
+	viper.SetConfigName(configName)
 	viper.SetDefault(etfsKey, []string{"VWCE.DE", "VWCE.MI"})
 	viper.SafeWriteConfig()
 
-	viper.OnConfigChange(func(e fsnotify.Event) {
-		fmt.Println("Config file changed:", e.Name)
-	})
-	viper.WatchConfig()
-
-	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err != nil {
-		fmt.Printf("No config file could be found.\n Falling back to default config file '%s'", viper.ConfigFileUsed())
+		log.Fatal("Could not find config file.\n")
 	}
 }
 
