@@ -3,29 +3,29 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/diogosilva96/etf-scraper/cmd/config"
 	"github.com/spf13/cobra"
 )
 
 // removeCmd represents the remove command
 var removeCmd = &cobra.Command{
 	Use:   "remove",
-	Short: "Removes an existing ETF from the tracked list.",
-	Args:  cobra.ExactArgs(1),
+	Short: "Removes an existing ETF from the configuration.",
+	Long: `Removes an existing ETF from the configuration.
+	
+	When the 'report' command is used the data from the removed ETF will no longer be displayed.`,
+	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("remove called")
+		etf := args[0]
+		err := config.RemoveEtf(etf)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Printf(fmt.Sprintf("etf '%s' successfully removed!", etf))
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(removeCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// removeCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// removeCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

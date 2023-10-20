@@ -10,3 +10,4 @@ Simple ETF cli application that scrapes some etf data.
 - Move each command to a specific file in app module.
 - Rethink app configuration
 - Improve command error messages 
+- Allow config file path specification?

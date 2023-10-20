@@ -40,7 +40,7 @@ func InitConfig() {
 	}
 }
 
-// AddEtf adds an etf symbol to the configuration.
+// AddEtf adds an etf to the configuration.
 func AddEtf(etf string) error {
 	if len(strings.TrimSpace(etf)) == 0 {
 		return errors.New(fmt.Sprintf("The input should not be empty."))
@@ -59,6 +59,28 @@ func AddEtf(etf string) error {
 		return errors.New(fmt.Sprintf("An error occurred while adding etf '%s' to the configuration. Details: %s", etf, err))
 	}
 	return nil
+}
+
+// RemoveEtf removes an etf from the configuration.
+func RemoveEtf(etf string) error {
+	if len(strings.TrimSpace(etf)) == 0 {
+		return nil
+	}
+
+	etfs := viper.GetStringSlice(etfsKey)
+	for i, e := range etfs {
+		if strings.EqualFold(e, etf) {
+			etfs = append(etfs[:i], etfs[i+1:]...)
+			viper.Set(etfsKey, etfs)
+			err := viper.WriteConfig()
+			if err != nil {
+				return errors.New(fmt.Sprintf("An error occurred while removing etf '%s' from the configuration. Details: %s", etf, err))
+			}
+			return nil
+		}
+	}
+
+	return errors.New(fmt.Sprintf("The etf '%s' could not be found in the configuration.", etf))
 }
 
 func contains(arr []string, value string) bool {
