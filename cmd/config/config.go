@@ -57,7 +57,7 @@ func AddEtf(etf string) error {
 // RemoveEtf removes an etf from the configuration.
 func RemoveEtf(etf string) error {
 	if len(strings.TrimSpace(etf)) == 0 {
-		return nil
+		return errors.New(fmt.Sprintf("The input should not be empty."))
 	}
 
 	etfs := viper.GetStringSlice(etfsKey)
