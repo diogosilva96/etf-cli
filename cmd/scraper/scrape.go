@@ -19,14 +19,24 @@ const (
 
 var client = &http.Client{}
 
-// Scrapes the ETF for the named symbol and returns the scraped ETF.
-func Scrape(symbol string) (*Etf, error) {
-	document, err := getDocument(symbol, client)
+// EtfExists checks whether the named etfSymbol exists.
+func EtfExists(etfSymbol string) bool {
+	document, err := getDocument(etfSymbol, client)
+	if err != nil {
+		return false
+	}
+
+	return etfExists(document, etfSymbol)
+}
+
+// ScrapesEtf scrapes the ETF for the named etfSymbol and returns the scraped ETF.
+func ScrapeEtf(etfSymbol string) (*Etf, error) {
+	document, err := getDocument(etfSymbol, client)
 	if err != nil {
 		return nil, err
 	}
 
-	etf, err := scrape(document, symbol)
+	etf, err := scrape(document, etfSymbol)
 	if err != nil {
 		return nil, err
 	}
@@ -72,22 +82,32 @@ func getDocument(symbol string, client *http.Client) (*goquery.Document, error) 
 	return document, nil
 }
 
+func etfExists(document *goquery.Document, symbol string) bool {
+	var priceStr = document.Find(fmt.Sprintf("fin-streamer[data-symbol=\"%s\"][data-field=\"regularMarketPrice\"]", symbol)).Text()
+
+	if len(priceStr) <= 0 {
+		return false
+	}
+
+	return true
+}
+
 func scrape(document *goquery.Document, symbol string) (*Etf, error) {
 	etf := Etf{}
 	etf.Symbol = symbol
 	var priceStr = document.Find(fmt.Sprintf("fin-streamer[data-symbol=\"%s\"][data-field=\"regularMarketPrice\"]", symbol)).Text()
 
 	if len(priceStr) <= 0 {
-		return nil, errors.New(fmt.Sprintf("Could not find etf with symbol '%s'", symbol))
+		return nil, errors.New(fmt.Sprintf("Could not find etf '%s'", symbol))
 	}
 
 	price, err := strconv.ParseFloat(priceStr, 32)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Could not parse price. Details: %s", err))
+		return nil, errors.New(fmt.Sprintf("Could not parse price for etf '%s'. Details: %s", symbol, err))
 	}
 	etf.Price = float32(price)
 
-	history, err := scrapeHistory(document)
+	history, err := scrapeHistory(document, symbol)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +116,7 @@ func scrape(document *goquery.Document, symbol string) (*Etf, error) {
 	return &etf, nil
 }
 
-func scrapeHistory(document *goquery.Document) ([]EtfHistory, error) {
+func scrapeHistory(document *goquery.Document, symbol string) ([]EtfHistory, error) {
 	tableHeaders := document.Find(fmt.Sprint("table[data-test=\"historical-prices\"] > thead > tr"))
 	dateIndex := -1
 	priceIndex := -1
@@ -116,7 +136,7 @@ func scrapeHistory(document *goquery.Document) ([]EtfHistory, error) {
 	})
 
 	if dateIndex == -1 || priceIndex == -1 {
-		return nil, errors.New("Could not parse the etf history.")
+		return nil, errors.New(fmt.Sprintf("Could not parse the history of the etf '%s'.", symbol))
 	}
 
 	history := make([]EtfHistory, 0, 60)

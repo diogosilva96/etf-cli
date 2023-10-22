@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/diogosilva96/etf-cli/cmd/config"
@@ -25,7 +24,7 @@ var rootCmd = &cobra.Command{
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
-		fmt.Println(err)
+		rootCmd.PrintErr(err)
 		os.Exit(1)
 	}
 }

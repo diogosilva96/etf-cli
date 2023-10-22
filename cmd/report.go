@@ -40,7 +40,7 @@ func generateReport() {
 		wg.Add(1)
 		go func(symbol string) {
 			defer wg.Done()
-			etf, err := scraper.Scrape(symbol)
+			etf, err := scraper.ScrapeEtf(symbol)
 			r := result{symbol: symbol, etf: etf, err: err}
 			ch <- r
 		}(s)

@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/diogosilva96/etf-cli/cmd/config"
 	"github.com/spf13/cobra"
 )
@@ -14,9 +12,9 @@ var listCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		etfs := config.ListEtfs()
-		fmt.Printf("ETFs:\n")
+		cmd.Printf("ETFs:\n")
 		for _, e := range etfs {
-			fmt.Printf("- %s\n", e)
+			cmd.Printf("- %s\n", e)
 		}
 	},
 }

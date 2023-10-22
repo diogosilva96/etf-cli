@@ -19,10 +19,10 @@ var removeCmd = &cobra.Command{
 		etf := args[0]
 		err := config.RemoveEtf(etf)
 		if err != nil {
-			fmt.Println(err)
+			cmd.PrintErr(err)
 			return
 		}
-		fmt.Printf(fmt.Sprintf("etf '%s' successfully removed!", etf))
+		cmd.Printf(fmt.Sprintf("etf '%s' successfully removed!", etf))
 	},
 }
 
