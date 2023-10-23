@@ -38,12 +38,14 @@ func generateReport(etfs []string) {
 	fmt.Printf("Scraping data...\n")
 	for _, s := range etfs {
 		wg.Add(1)
+		reportGenerator := report.NewReportGenerator(report.WithIntervals([]int{5, 30, 60}))
 		go func(symbol string) {
 			defer wg.Done()
 			etf, err := scraper.ScrapeEtf(symbol)
+
 			var r report.EtfReport
 			if err == nil {
-				r = *report.GenerateReport(*etf)
+				r = *reportGenerator.GenerateReport(*etf)
 			}
 			res := result{symbol: symbol, report: &r, err: err}
 			ch <- res

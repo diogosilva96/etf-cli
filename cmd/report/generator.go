@@ -7,11 +7,22 @@ import (
 	"github.com/diogosilva96/etf-cli/cmd/scraper"
 )
 
+var (
+	defaultIntervals = []int{7, 30}
+)
+
+// Represents a report generator.
+type ReportGenerator struct {
+	Intervals []int
+}
+
+// ReportGeneratorOption represents a report generator option.
+type ReportGeneratorOption func(*ReportGenerator)
+
 // GenerateReport generates a report based on the provided etf struct.
-func GenerateReport(etf scraper.Etf) *EtfReport {
+func (rg *ReportGenerator) GenerateReport(etf scraper.Etf) *EtfReport {
 
 	// set the number of days for the interval reports (e.g., last 5, 30 & 60 days)
-	intervals := []int{5, 30, 60}
 	report := &EtfReport{
 		Symbol:          etf.Symbol,
 		CurrentPrice:    etf.Price,
@@ -19,7 +30,11 @@ func GenerateReport(etf scraper.Etf) *EtfReport {
 		IntervalReports: make([]EtfIntervalReport, 0),
 	}
 
-	for _, interval := range intervals {
+	for _, interval := range rg.Intervals {
+		if interval <= 0 {
+			// do something, or is it ok to ignore?
+			continue
+		}
 		intervalReport, err := generateIntervalReport(etf, interval)
 		if err != nil {
 			// do something, or is it ok to ignore?
@@ -29,6 +44,23 @@ func GenerateReport(etf scraper.Etf) *EtfReport {
 	}
 
 	return report
+}
+
+// NewReportGenerator initializes a new report generator.
+func NewReportGenerator(options ...ReportGeneratorOption) *ReportGenerator {
+	rg := &ReportGenerator{Intervals: defaultIntervals}
+
+	for _, opt := range options {
+		opt(rg)
+	}
+	return rg
+}
+
+// WithIntervals sets the intervals option on a report generator.
+func WithIntervals(intervals []int) ReportGeneratorOption {
+	return func(rg *ReportGenerator) {
+		rg.Intervals = intervals
+	}
 }
 
 func generateIntervalReport(etf scraper.Etf, numberOfDays int) (*EtfIntervalReport, error) {
