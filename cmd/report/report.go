@@ -35,7 +35,7 @@ func GenerateReport(etf scraper.Etf) *EtfReport {
 	for _, interval := range intervals {
 		intervalReport, err := generateIntervalReport(etf, interval)
 		if err != nil {
-			// do something?
+			// do something, or is it ok to ignore?
 			continue
 		}
 		report.IntervalReports = append(report.IntervalReports, *intervalReport)
@@ -45,34 +45,27 @@ func GenerateReport(etf scraper.Etf) *EtfReport {
 }
 
 func generateIntervalReport(etf scraper.Etf, numberOfDays int) (*EtfIntervalReport, error) {
-
-	currentPrice := etf.History[0].Price
-
 	report := &EtfIntervalReport{
 		IntervalInDays: numberOfDays,
+		MaxPrice:       etf.Price,
+		MinPrice:       etf.Price,
 	}
 
-	max := currentPrice
-	min := currentPrice
-	var change float32
 	historySize := len(etf.History)
 	if historySize-1 < numberOfDays {
 		return nil, errors.New(fmt.Sprintf("The etf history is only '%v' days long.", historySize))
 	}
 	for i, h := range etf.History[:numberOfDays] {
-		if h.Price > max {
-			max = h.Price
+		if h.Price > report.MaxPrice {
+			report.MaxPrice = h.Price
 		}
-		if h.Price < min {
-			min = h.Price
+		if h.Price < report.MinPrice {
+			report.MinPrice = h.Price
 		}
 		if i == numberOfDays-1 {
-			change = (currentPrice - h.Price) - 1
+			report.IntervalChange = (etf.Price - h.Price) - 1
 		}
 	}
-	report.MinPrice = min
-	report.MaxPrice = max
-	report.IntervalChange = change
 
 	return report, nil
 }
