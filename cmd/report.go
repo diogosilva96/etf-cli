@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/diogosilva96/etf-cli/cmd/config"
+	"github.com/diogosilva96/etf-cli/cmd/report"
 	"github.com/diogosilva96/etf-cli/cmd/scraper"
 	"github.com/spf13/cobra"
 )
@@ -18,7 +19,7 @@ var reportCmd = &cobra.Command{
 	A report will be generated for each ETF in the configuration.`,
 	Args: cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-		generateReport()
+		generateReport(config.ListEtfs())
 	},
 }
 
@@ -26,13 +27,12 @@ func init() {
 	rootCmd.AddCommand(reportCmd)
 }
 
-func generateReport() {
+func generateReport(etfs []string) {
 	type result struct {
 		symbol string
-		etf    *scraper.Etf
+		report *report.EtfReport
 		err    error
 	}
-	etfs := config.ListEtfs()
 	ch := make(chan result, len(etfs))
 	wg := sync.WaitGroup{}
 	fmt.Printf("Scraping data...\n")
@@ -41,11 +41,15 @@ func generateReport() {
 		go func(symbol string) {
 			defer wg.Done()
 			etf, err := scraper.ScrapeEtf(symbol)
-			r := result{symbol: symbol, etf: etf, err: err}
-			ch <- r
+			var r report.EtfReport
+			if err == nil {
+				r = *report.GenerateReport(*etf)
+			}
+			res := result{symbol: symbol, report: &r, err: err}
+			ch <- res
 		}(s)
 	}
-	etfData := make([]scraper.Etf, 0, len(etfs))
+	reports := make([]report.EtfReport, 0, len(etfs))
 	wg.Wait()
 	close(ch)
 
@@ -54,10 +58,9 @@ func generateReport() {
 			fmt.Printf("[%s] Something went wrong while scraping the data. Error details: %s\n", r.symbol, r.err)
 			continue
 		}
-		etfData = append(etfData, *r.etf)
+		reports = append(reports, *r.report)
 		fmt.Printf("[%s] Success!\n", r.symbol)
+		fmt.Printf("%+v\n", *r.report)
 	}
 	fmt.Printf("Scraping complete.\n")
-
-	fmt.Printf("%+v\n", etfData)
 }

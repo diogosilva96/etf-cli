@@ -111,8 +111,8 @@ func scrape(document *goquery.Document, symbol string) (*Etf, error) {
 	if err != nil {
 		return nil, err
 	}
-	etf.History = history
 
+	etf.History = history
 	return &etf, nil
 }
 

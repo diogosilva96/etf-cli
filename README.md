@@ -4,7 +4,7 @@ Simple ETF cli application that scrapes some etf data.
 
 ## TODO
 
-- Add pretty etf/history display. Add metrics (e.g, dif last 5 days, dif last 30 days, etc.)
-- Add symbol validation to ensure it exists
+- Add pretty etf/history display. Add metrics (e.g, dif last 5 days, dif last 30 days, etc.) (On-going)
 - Tidy up error handling
 - Improve command error messages
+- Merge report & scraper modules?
