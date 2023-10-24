@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/diogosilva96/etf-cli/cmd/scraper"
+	"github.com/diogosilva96/etf-cli/data"
 )
 
 var (
@@ -20,7 +20,7 @@ type ReportGenerator struct {
 type ReportGeneratorOption func(*ReportGenerator)
 
 // GenerateReport generates a report based on the provided etf struct.
-func (rg *ReportGenerator) GenerateReport(etf scraper.Etf) *EtfReport {
+func (rg *ReportGenerator) GenerateReport(etf data.Etf) *EtfReport {
 
 	// set the number of days for the interval reports (e.g., last 5, 30 & 60 days)
 	report := &EtfReport{
@@ -63,7 +63,7 @@ func WithIntervals(intervals []int) ReportGeneratorOption {
 	}
 }
 
-func generateIntervalReport(etf scraper.Etf, numberOfDays int) (*EtfIntervalReport, error) {
+func generateIntervalReport(etf data.Etf, numberOfDays int) (*EtfIntervalReport, error) {
 	report := &EtfIntervalReport{
 		IntervalInDays: numberOfDays,
 		MaxPrice:       etf.Price,

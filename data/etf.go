@@ -1,4 +1,4 @@
-package scraper
+package data
 
 // Represents an Etf
 type Etf struct {

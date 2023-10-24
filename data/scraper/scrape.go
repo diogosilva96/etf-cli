@@ -5,23 +5,17 @@ import (
 	"fmt"
 	"strconv"
 
-	"net/http"
-	"net/url"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/diogosilva96/etf-cli/data"
 )
 
-const (
-	baseUrl   = "https://finance.yahoo.com"
-	userAgent = "github.com/diogosilva96/etf-cli"
-)
-
-var client = &http.Client{}
+var client = data.NewEtfClient()
 
 // EtfExists checks whether the named etfSymbol exists.
 func EtfExists(etfSymbol string) bool {
-	document, err := getDocument(etfSymbol, client)
+	document, err := getDocument(etfSymbol)
 	if err != nil {
 		return false
 	}
@@ -30,8 +24,8 @@ func EtfExists(etfSymbol string) bool {
 }
 
 // ScrapesEtf scrapes the ETF for the named etfSymbol and returns the scraped ETF.
-func ScrapeEtf(etfSymbol string) (*Etf, error) {
-	document, err := getDocument(etfSymbol, client)
+func ScrapeEtf(etfSymbol string) (*data.Etf, error) {
+	document, err := getDocument(etfSymbol)
 	if err != nil {
 		return nil, err
 	}
@@ -44,30 +38,8 @@ func ScrapeEtf(etfSymbol string) (*Etf, error) {
 	return etf, err
 }
 
-func createRequest(symbol string) (*http.Request, error) {
-	u := buildUrl(symbol)
-	r, err := http.NewRequest("GET", u, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	uParsed, err := url.Parse(u)
-	if err != nil {
-		return nil, err
-	}
-
-	r.Host = uParsed.Host
-	r.Header.Add("User-Agent", userAgent)
-	return r, nil
-}
-
-func getDocument(symbol string, client *http.Client) (*goquery.Document, error) {
-	req, err := createRequest(symbol)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := client.Do(req)
-
+func getDocument(etfSymbol string) (*goquery.Document, error) {
+	resp, err := client.GetEtfDataResponse(etfSymbol)
 	if err != nil {
 		return nil, err
 	}
@@ -92,8 +64,8 @@ func etfExists(document *goquery.Document, symbol string) bool {
 	return true
 }
 
-func scrape(document *goquery.Document, symbol string) (*Etf, error) {
-	etf := Etf{}
+func scrape(document *goquery.Document, symbol string) (*data.Etf, error) {
+	etf := data.Etf{}
 	etf.Symbol = symbol
 	var priceStr = document.Find(fmt.Sprintf("fin-streamer[data-symbol=\"%s\"][data-field=\"regularMarketPrice\"]", symbol)).Text()
 
@@ -116,7 +88,7 @@ func scrape(document *goquery.Document, symbol string) (*Etf, error) {
 	return &etf, nil
 }
 
-func scrapeHistory(document *goquery.Document, symbol string) ([]EtfHistory, error) {
+func scrapeHistory(document *goquery.Document, symbol string) ([]data.EtfHistory, error) {
 	tableHeaders := document.Find(fmt.Sprint("table[data-test=\"historical-prices\"] > thead > tr"))
 	dateIndex := -1
 	priceIndex := -1
@@ -139,13 +111,13 @@ func scrapeHistory(document *goquery.Document, symbol string) ([]EtfHistory, err
 		return nil, errors.New(fmt.Sprintf("Could not parse the history of the etf '%s'.", symbol))
 	}
 
-	history := make([]EtfHistory, 0, 60)
+	history := make([]data.EtfHistory, 0, 90)
 	tableData := document.Find("table[data-test=\"historical-prices\"] > tbody")
 	tableData.Children().Each(func(row int, rowSelection *goquery.Selection) {
 		if row > 60 {
 			return
 		}
-		h := EtfHistory{}
+		h := data.EtfHistory{}
 		rowSelection.Children().Each(func(col int, colSelection *goquery.Selection) {
 
 			if col == priceIndex {
@@ -169,8 +141,4 @@ func scrapeHistory(document *goquery.Document, symbol string) ([]EtfHistory, err
 	})
 
 	return history, nil
-}
-
-func buildUrl(symbol string) string {
-	return fmt.Sprintf("%s/quote/%s/history", baseUrl, symbol)
 }

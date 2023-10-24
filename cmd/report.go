@@ -5,8 +5,8 @@ import (
 	"sync"
 
 	"github.com/diogosilva96/etf-cli/cmd/config"
-	"github.com/diogosilva96/etf-cli/cmd/report"
-	"github.com/diogosilva96/etf-cli/cmd/scraper"
+	"github.com/diogosilva96/etf-cli/data/report"
+	"github.com/diogosilva96/etf-cli/data/scraper"
 	"github.com/spf13/cobra"
 )
 
