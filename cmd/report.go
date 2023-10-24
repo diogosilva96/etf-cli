@@ -6,8 +6,8 @@ import (
 	"sync"
 
 	"github.com/diogosilva96/etf-cli/cmd/config"
+	"github.com/diogosilva96/etf-cli/data"
 	"github.com/diogosilva96/etf-cli/data/report"
-	"github.com/diogosilva96/etf-cli/data/scraper"
 	"github.com/spf13/cobra"
 )
 
@@ -34,6 +34,7 @@ func generateReport(etfs []string) {
 		report *report.EtfReport
 		err    error
 	}
+	etfClient := data.NewEtfClient()
 	ch := make(chan result, len(etfs))
 	wg := sync.WaitGroup{}
 	fmt.Printf("Scraping data...\n")
@@ -43,15 +44,15 @@ func generateReport(etfs []string) {
 		if err != nil {
 			log.Fatal(err) // this should never happen in theory, unless misconfiguration
 		}
-		go func(symbol string) {
+		go func(etfSymbol string) {
 			defer wg.Done()
-			etf, err := scraper.ScrapeEtf(symbol)
+			etf, err := etfClient.GetEtf(etfSymbol)
 
 			var r report.EtfReport
 			if err == nil {
 				r = *reportGenerator.GenerateReport(*etf)
 			}
-			res := result{symbol: symbol, report: &r, err: err}
+			res := result{symbol: etfSymbol, report: &r, err: err}
 			ch <- res
 		}(s)
 	}
