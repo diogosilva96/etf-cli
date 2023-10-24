@@ -31,10 +31,6 @@ func (rg *ReportGenerator) GenerateReport(etf data.Etf) *EtfReport {
 	}
 
 	for _, interval := range rg.Intervals {
-		if interval <= 0 {
-			// do something, or is it ok to ignore?
-			continue
-		}
 		intervalReport, err := generateIntervalReport(etf, interval)
 		if err != nil {
 			// do something, or is it ok to ignore?
@@ -47,13 +43,19 @@ func (rg *ReportGenerator) GenerateReport(etf data.Etf) *EtfReport {
 }
 
 // NewReportGenerator initializes a new report generator.
-func NewReportGenerator(options ...ReportGeneratorOption) *ReportGenerator {
+func NewReportGenerator(options ...ReportGeneratorOption) (*ReportGenerator, error) {
 	rg := &ReportGenerator{Intervals: defaultIntervals}
 
 	for _, opt := range options {
 		opt(rg)
 	}
-	return rg
+
+	err := validateReportGenerator(rg)
+	if err != nil {
+		return nil, err
+	}
+
+	return rg, nil
 }
 
 // WithIntervals sets the intervals option on a report generator.
@@ -61,6 +63,18 @@ func WithIntervals(intervals []int) ReportGeneratorOption {
 	return func(rg *ReportGenerator) {
 		rg.Intervals = intervals
 	}
+}
+
+func validateReportGenerator(rg *ReportGenerator) error {
+	if rg.Intervals == nil || len(rg.Intervals) == 0 {
+		return errors.New("At least one interval should be specified.")
+	}
+	for _, i := range rg.Intervals {
+		if i < 1 {
+			return errors.New("The interval should be greater than 0.")
+		}
+	}
+	return nil
 }
 
 func generateIntervalReport(etf data.Etf, numberOfDays int) (*EtfIntervalReport, error) {

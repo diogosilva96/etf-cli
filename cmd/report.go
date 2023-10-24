@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"sync"
 
 	"github.com/diogosilva96/etf-cli/cmd/config"
@@ -38,7 +39,10 @@ func generateReport(etfs []string) {
 	fmt.Printf("Scraping data...\n")
 	for _, s := range etfs {
 		wg.Add(1)
-		reportGenerator := report.NewReportGenerator(report.WithIntervals([]int{5, 30, 60}))
+		reportGenerator, err := report.NewReportGenerator(report.WithIntervals([]int{5, 30, 60}))
+		if err != nil {
+			log.Fatal(err) // this should never happen in theory, unless misconfiguration
+		}
 		go func(symbol string) {
 			defer wg.Done()
 			etf, err := scraper.ScrapeEtf(symbol)
