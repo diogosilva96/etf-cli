@@ -20,7 +20,7 @@ var reportCmd = &cobra.Command{
 	A report will be generated for each ETF in the configuration.`,
 	Args: cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-		generateReport(config.ListEtfs())
+		generateAndPrintReports(config.ListEtfs())
 	},
 }
 
@@ -28,15 +28,16 @@ func init() {
 	rootCmd.AddCommand(reportCmd)
 }
 
-func generateReport(etfs []string) {
-	type result struct {
-		symbol string
-		report *report.EtfReport
-		err    error
-	}
-	etfClient := data.NewEtfClient()
+type result struct {
+	symbol string
+	report *report.EtfReport
+	err    error
+}
+
+func generateAndPrintReports(etfs []string) {
 	ch := make(chan result, len(etfs))
 	wg := &sync.WaitGroup{}
+	etfClient := data.NewEtfClient()
 	fmt.Printf("Fetching etf data...\n")
 	for _, s := range etfs {
 		wg.Add(1)
@@ -56,17 +57,21 @@ func generateReport(etfs []string) {
 			ch <- res
 		}(s, wg, ch)
 	}
-	reports := make([]report.EtfReport, 0, len(etfs))
+
 	wg.Wait()
 	close(ch)
 
+	printReports(ch)
+}
+
+func printReports(ch <-chan result) {
 	for r := range ch {
 		fmt.Printf("----------------------------------------------------------------------------\n")
 		if r.err != nil {
 			fmt.Printf("Error: [%s] Something went wrong while fetching the etf data. Error details: %s\n", r.symbol, r.err)
 			continue
 		}
-		reports = append(reports, *r.report)
+
 		fmt.Printf("%s\n", r.report.String())
 	}
 }
