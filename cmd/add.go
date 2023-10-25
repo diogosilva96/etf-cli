@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/diogosilva96/etf-cli/cmd/config"
 	"github.com/diogosilva96/etf-cli/data"
 	"github.com/spf13/cobra"
@@ -22,26 +19,16 @@ var addCmd = &cobra.Command{
 		etfClient := data.NewEtfClient()
 
 		if !etfClient.EtfExists(etf) {
-			printErrf("Could not find etf '%s'", etf)
+			cmd.PrintErrf("Could not find etf '%s'", etf)
 			return
 		}
 		err := config.AddEtf(etf)
 		if err != nil {
-			printErr(err)
+			cmd.PrintErr(err)
 			return
 		}
 		cmd.Printf("etf '%s' successfully added!", etf)
 	},
-}
-
-func printErrf(format string, a ...any) { // TODO move this into module
-	fmt.Printf("Error: %s\n", fmt.Sprintf(format, a...))
-	os.Exit(1)
-}
-
-func printErr(e error) {
-	fmt.Printf("Error: %s\n", e)
-	os.Exit(1)
 }
 
 func init() {

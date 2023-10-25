@@ -4,25 +4,20 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"os"
 	"strings"
 
-	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 const (
 	configType = "json"
-	configName = ".etf-cli-config"
+	configName = "config"
 	etfsKey    = "etfs"
 )
 
 // InitConfig initializes the configuration.
 func InitConfig() {
-	home, err := os.UserHomeDir()
-	cobra.CheckErr(err)
-
-	viper.AddConfigPath(home)
+	viper.AddConfigPath(".")
 	viper.SetConfigType(configType)
 	viper.SetConfigName(configName)
 	viper.SetDefault(etfsKey, []string{"VWCE.DE", "VWCE.MI"})

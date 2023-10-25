@@ -12,9 +12,13 @@ var listCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		etfs := config.ListEtfs()
+		if len(etfs) == 0 {
+			cmd.Println("There are no etfs in the configuration.")
+			return
+		}
 		cmd.Printf("ETFs:\n")
 		for _, e := range etfs {
-			cmd.Printf("- %s\n", e)
+			cmd.Printf(" - %s\n", e)
 		}
 	},
 }
