@@ -1,6 +1,6 @@
 # etf-cli
 
-Simple ETF cli application that scrapes some etf data.
+Simple ETF cli that displays etf data (by scraping it) & allows management of tracked etfs.
 
 ## TODO
 
