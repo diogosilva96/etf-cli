@@ -36,15 +36,15 @@ func generateReport(etfs []string) {
 	}
 	etfClient := data.NewEtfClient()
 	ch := make(chan result, len(etfs))
-	wg := sync.WaitGroup{}
-	fmt.Printf("Scraping data...\n")
+	wg := &sync.WaitGroup{}
+	fmt.Printf("Fetching etf data...\n")
 	for _, s := range etfs {
 		wg.Add(1)
 		reportGenerator, err := report.NewReportGenerator(report.WithIntervals([]int{5, 30, 60}))
 		if err != nil {
 			log.Fatal(err) // this should never happen in theory, unless misconfiguration
 		}
-		go func(etfSymbol string) {
+		go func(etfSymbol string, wg *sync.WaitGroup, ch chan<- result) {
 			defer wg.Done()
 			etf, err := etfClient.GetEtf(etfSymbol)
 
@@ -54,20 +54,19 @@ func generateReport(etfs []string) {
 			}
 			res := result{symbol: etfSymbol, report: &r, err: err}
 			ch <- res
-		}(s)
+		}(s, wg, ch)
 	}
 	reports := make([]report.EtfReport, 0, len(etfs))
 	wg.Wait()
 	close(ch)
 
 	for r := range ch {
+		fmt.Printf("----------------------------------------------------------------------------\n")
 		if r.err != nil {
-			fmt.Printf("[%s] Something went wrong while scraping the data. Error details: %s\n", r.symbol, r.err)
+			fmt.Printf("Error: [%s] Something went wrong while fetching the etf data. Error details: %s\n", r.symbol, r.err)
 			continue
 		}
 		reports = append(reports, *r.report)
-		fmt.Printf("[%s] Success!\n", r.symbol)
-		fmt.Printf("%+v\n", *r.report)
+		fmt.Printf("%s\n", r.report.String())
 	}
-	fmt.Printf("Scraping complete.\n")
 }
