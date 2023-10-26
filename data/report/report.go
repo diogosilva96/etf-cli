@@ -18,7 +18,7 @@ type EtfIntervalReport struct {
 	MinPrice, MaxPrice, IntervalChange, IntervalPercentChange float32
 }
 
-// String outputs a string for the report.
+// String outputs a string representation for the report.
 func (r *EtfReport) String() string {
 	var sb strings.Builder
 	sb.WriteString(fmt.Sprintf("[%s] Price: %.2f, Change: %.2f (%.2f%%)", r.Symbol, r.CurrentPrice, r.Change, r.PercentChange))
