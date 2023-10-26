@@ -20,7 +20,7 @@ func (r *EtfReport) String() string {
 	s := fmt.Sprintf(`[%s] Price: %v, Change: %v`, r.Symbol, r.CurrentPrice, r.Change)
 	for _, i := range r.IntervalReports {
 		s += fmt.Sprintf("\n")
-		s += fmt.Sprintf(`[%v days] Price range: [%v, %v], Change: %v,`, i.IntervalInDays, i.MinPrice, i.MaxPrice, i.IntervalChange)
+		s += fmt.Sprintf("[%v days] Price range: [%v, %v], Change: %v", i.IntervalInDays, i.MinPrice, i.MaxPrice, i.IntervalChange)
 	}
 	return s
 }
