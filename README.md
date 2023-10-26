@@ -6,4 +6,5 @@ Simple ETF cli that displays etf data (by scraping it) & allows management of tr
 
 - Tidy up error handling
 - Improve command error messages
-- Add functional options pattern to client.go ?
+- Add functional options pattern for client.go ?
+- Remove ETF command - allow removal with an index flag or by symbol?
