@@ -27,7 +27,7 @@ var addCmd = &cobra.Command{
 			cmd.PrintErr(err)
 			return
 		}
-		cmd.Printf("etf '%s' successfully added!", etf)
+		cmd.Printf("'%s' successfully added!", etf)
 	},
 }
 

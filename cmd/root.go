@@ -27,6 +27,11 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(config.InitConfig)
+	cobra.OnInitialize(func() {
+		err := config.InitConfig()
+		if err != nil {
+			cobra.CheckErr(err)
+		}
+	})
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 }

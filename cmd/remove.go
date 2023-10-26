@@ -22,7 +22,7 @@ var removeCmd = &cobra.Command{
 			cmd.PrintErr(err)
 			return
 		}
-		cmd.Printf(fmt.Sprintf("etf '%s' successfully removed!", etf))
+		cmd.Printf(fmt.Sprintf("'%s' successfully removed!", etf))
 	},
 }
 

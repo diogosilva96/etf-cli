@@ -3,7 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
-	"log"
+	"os"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -11,21 +11,28 @@ import (
 
 const (
 	configType = "json"
-	configName = "config"
+	configName = ".etf-cli-config"
 	etfsKey    = "etfs"
 )
 
 // InitConfig initializes the configuration.
-func InitConfig() {
-	viper.AddConfigPath(".")
+func InitConfig() error {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return err
+	}
+
+	viper.AddConfigPath(home)
 	viper.SetConfigType(configType)
 	viper.SetConfigName(configName)
 	viper.SetDefault(etfsKey, []string{"VWCE.DE", "VWCE.MI"})
 	viper.SafeWriteConfig()
 
 	if err := viper.ReadInConfig(); err != nil {
-		log.Fatal("Could not find config file.\n")
+		return errors.New("Could not find config file.")
 	}
+
+	return nil
 }
 
 // AddEtf adds an etf to the configuration.
