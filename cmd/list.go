@@ -17,8 +17,8 @@ var listCmd = &cobra.Command{
 			return
 		}
 		cmd.Printf("ETFs:\n")
-		for _, e := range etfs {
-			cmd.Printf(" - %s\n", e)
+		for i, e := range etfs {
+			cmd.Printf(" %v. %s\n", i+1, e)
 		}
 	},
 }
