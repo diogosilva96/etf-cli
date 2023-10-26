@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/diogosilva96/etf-cli/cmd/config"
-	"github.com/diogosilva96/etf-cli/data"
+	"github.com/diogosilva96/etf-cli/internal/config"
+	"github.com/diogosilva96/etf-cli/internal/data"
 	"github.com/spf13/cobra"
 )
 

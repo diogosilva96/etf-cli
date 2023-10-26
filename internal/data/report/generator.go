@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/diogosilva96/etf-cli/data"
+	"github.com/diogosilva96/etf-cli/internal/data"
 )
 
 var (

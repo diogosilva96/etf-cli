@@ -4,9 +4,9 @@ import (
 	"log"
 	"sync"
 
-	"github.com/diogosilva96/etf-cli/cmd/config"
-	"github.com/diogosilva96/etf-cli/data"
-	"github.com/diogosilva96/etf-cli/data/report"
+	"github.com/diogosilva96/etf-cli/internal/config"
+	"github.com/diogosilva96/etf-cli/internal/data"
+	"github.com/diogosilva96/etf-cli/internal/data/report"
 	"github.com/spf13/cobra"
 )
 
