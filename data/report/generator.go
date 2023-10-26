@@ -3,6 +3,7 @@ package report
 import (
 	"errors"
 	"fmt"
+	"math"
 
 	"github.com/diogosilva96/etf-cli/data"
 )
@@ -23,10 +24,12 @@ type ReportGeneratorOption func(*ReportGenerator)
 func (rg *ReportGenerator) GenerateReport(etf data.Etf) *EtfReport {
 
 	// set the number of days for the interval reports (e.g., last 5, 30 & 60 days)
+	previousDayPrice := etf.History[1].Price
 	report := &EtfReport{
 		Symbol:          etf.Symbol,
 		CurrentPrice:    etf.Price,
-		Change:          (etf.Price - etf.History[1].Price),
+		Change:          calculateChange(etf.Price, previousDayPrice),
+		PercentChange:   calculatePercentChange(etf.Price, previousDayPrice),
 		IntervalReports: make([]EtfIntervalReport, 0),
 	}
 
@@ -96,9 +99,18 @@ func generateIntervalReport(etf data.Etf, numberOfDays int) (*EtfIntervalReport,
 			report.MinPrice = h.Price
 		}
 		if i == numberOfDays-1 {
-			report.IntervalChange = (etf.Price - h.Price) - 1
+			report.IntervalChange = calculateChange(etf.Price, h.Price)
+			report.IntervalPercentChange = calculatePercentChange(etf.Price, h.Price)
 		}
 	}
 
 	return report, nil
+}
+
+func calculatePercentChange(currentValue float32, previousValue float32) float32 {
+	return ((currentValue - previousValue) / float32(math.Abs(float64(previousValue)))) * 100
+}
+
+func calculateChange(currentValue float32, previousValue float32) float32 {
+	return currentValue - previousValue
 }
