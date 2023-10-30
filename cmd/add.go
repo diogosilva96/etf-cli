@@ -10,7 +10,7 @@ import (
 var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Adds a new ETF to the configuration.",
-	Long: `Adds a new ETF to the configuration.
+	Long: `Adds a new ETF to the configuration
 	
 	When the 'report' command is used all the data for the ETFs in the configuration will be displayed.`,
 	Args: cobra.ExactArgs(1),
