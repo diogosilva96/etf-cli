@@ -25,7 +25,7 @@ var reportCmd = &cobra.Command{
 			return
 		}
 
-		reportGenerator, err := report.NewReportGenerator(report.WithIntervals([]int{5, 30, 60}))
+		reportGenerator, err := report.NewReportGenerator(report.WithIntervals([]int{7, 30, 60}))
 		if err != nil {
 			log.Fatal(err) // this should never happen in theory, unless misconfiguration
 		}
