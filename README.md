@@ -16,9 +16,10 @@ Available commands:
 Steps:
 
 1. Download the source code.
-2. In the root folder run `go build .`
-3. Then run `go install .`
-4. You can then run any command using `etf-cli [command]`
+2. Navigate to the root project folder.
+3. Run `go build .`
+4. Run `go install .`
+5. You can then run any command using `etf-cli [command]`
 
 ## TODO
 
