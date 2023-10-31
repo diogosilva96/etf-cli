@@ -25,7 +25,7 @@ func InitConfig() error {
 	viper.AddConfigPath(home)
 	viper.SetConfigType(configType)
 	viper.SetConfigName(configName)
-	viper.SetDefault(etfsKey, []string{"VWCE.DE", "VWCE.MI"})
+	viper.SetDefault(etfsKey, []string{"VWCE.DE"})
 	viper.SafeWriteConfig()
 
 	if err := viper.ReadInConfig(); err != nil {
