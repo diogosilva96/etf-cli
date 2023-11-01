@@ -32,7 +32,7 @@ A report will be generated for each ETF in the configuration.`,
 		ch := make(chan result, len(etfs))
 		wg := &sync.WaitGroup{}
 		etfClient := data.NewEtfClient()
-		cmd.Printf("Fetching etf data...\n")
+		cmd.Printf("Retrieving ETF data...\n")
 		for _, s := range etfs {
 			wg.Add(1)
 			go func(etfSymbol string, wg *sync.WaitGroup, ch chan<- result, rg *report.ReportGenerator) {
