@@ -17,9 +17,8 @@ var addCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		etf := args[0]
 		etfClient := data.NewEtfClient()
-
 		if !etfClient.EtfExists(etf) {
-			cmd.PrintErrf("Could not find etf '%s'", etf)
+			cmd.PrintErrf("Could not find ETF '%s'", etf)
 			return
 		}
 		err := config.AddEtf(etf)

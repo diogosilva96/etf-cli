@@ -13,10 +13,10 @@ var listCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		etfs := config.ListEtfs()
 		if len(etfs) == 0 {
-			cmd.Println("There are no etfs in the configuration.")
+			cmd.Println("There are no ETFs in the configuration.")
 			return
 		}
-		cmd.Printf("ETFs:\n")
+		cmd.Printf("You are tracking the following ETFs:\n")
 		for i, e := range etfs {
 			cmd.Printf(" %v. %s\n", i+1, e)
 		}
