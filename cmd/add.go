@@ -18,7 +18,7 @@ When the 'report' command is used all the data for the ETFs in the configuration
 		etf := args[0]
 		etfClient := data.NewEtfClient()
 		if !etfClient.EtfExists(etf) {
-			cmd.PrintErrf("Could not find ETF '%s'", etf)
+			cmd.PrintErrf("Could not find any data for '%s', looks like it does not exist.", etf)
 			return
 		}
 		err := config.AddEtf(etf)
