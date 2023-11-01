@@ -12,9 +12,10 @@ import (
 )
 
 const (
-	defaultBaseUrl   = "https://finance.yahoo.com"
-	defaultUserAgent = "github.com/diogosilva96/etf-cli"
-	host             = "finance.yahoo.com"
+	defaultBaseUrl    = "https://finance.yahoo.com"
+	defaultUserAgent  = "github.com/diogosilva96/etf-cli"
+	host              = "finance.yahoo.com"
+	numberHistoryDays = 180
 )
 
 // EtfClient Represents an etf client.
@@ -144,10 +145,10 @@ func scrapeHistory(document *goquery.Document, symbol string) ([]EtfHistory, err
 		return nil, errors.New(fmt.Sprintf("Could not parse the history of the etf '%s'.", symbol))
 	}
 
-	history := make([]EtfHistory, 0, 90)
+	history := make([]EtfHistory, 0, numberHistoryDays)
 	tableData := document.Find("table[data-test=\"historical-prices\"] > tbody")
 	tableData.Children().Each(func(row int, rowSelection *goquery.Selection) {
-		if row > 60 {
+		if row > numberHistoryDays {
 			return
 		}
 		h := EtfHistory{}
