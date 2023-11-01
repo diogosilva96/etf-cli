@@ -12,7 +12,7 @@ var addCmd = &cobra.Command{
 	Short: "Adds a new ETF to the configuration.",
 	Long: `Adds a new ETF to the configuration
 	
-	When the 'report' command is used all the data for the ETFs in the configuration will be displayed.`,
+When the 'report' command is used all the data for the ETFs in the configuration will be displayed.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		etf := args[0]

@@ -8,7 +8,7 @@ import (
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "Lists the ETFs in the configuration.",
+	Short: "Lists all the ETFs in the configuration.",
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		etfs := config.ListEtfs()

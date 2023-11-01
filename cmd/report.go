@@ -16,7 +16,7 @@ var reportCmd = &cobra.Command{
 	Short: "Provides a report containing real time information of the ETFs in the configuration.",
 	Long: `Provides a report containing real time information of the ETFs in the configuration.
 	
-	A report will be generated for each ETF in the configuration.`,
+A report will be generated for each ETF in the configuration.`,
 	Args: cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		etfs := config.ListEtfs()

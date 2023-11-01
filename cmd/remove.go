@@ -12,7 +12,7 @@ var removeCmd = &cobra.Command{
 	Short: "Removes an existing ETF from the configuration based on the specified index.",
 	Long: `Removes an existing ETF from the configuration based on the specified index.
 
-	When the 'report' command is used the data from the removed ETF will no longer be displayed.`,
+When the 'report' command is used the data from the removed ETF will no longer be displayed.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		idxStr := args[0]
