@@ -5,11 +5,11 @@ The ETF data is scraped from [Yahoo Finance](https://finance.yahoo.com/).
 
 Available commands:
 
-- `etf-cli report` - generates a report for the ETFs in the configuration.
-- `etf-cli add <etf-symbol>` - adds the specified ETF symbol to the configuration. The symbol must exist in Yahoo finance, such as [VWCE.DE](https://finance.yahoo.com/quote/VWCE.DE/)
-- `etf-cli remove <etf-symbol>` - removes the specified ETF symbol from the configuration.
-- `etf-cli list` - lists the ETF symbols currently in the configuration.
-- `etf-cli help` - help command.
+- `report` - generates a report for the ETFs in the configuration
+- `add <etf-symbol>` - adds the specified ETF symbol to the configuration. The symbol must exist in Yahoo finance, such as [VWCE.DE](https://finance.yahoo.com/quote/VWCE.DE/)
+- `remove <index>` - removes the ETF with the specified index from the configuration
+- `list` - lists the ETF symbols currently in the configuration
+- `help` - help command
 
 ## Installation
 
@@ -22,9 +22,7 @@ Steps:
 5. You can then run any command using `etf-cli [command]`
 
 ## TODO
-
-- Tidy up error handling
-- Improve command error messages
+- Tidy up error handling & improve command error messages
 - Add functional options pattern for client.go ?
-- Remove ETF command - allow removal with an index flag or by symbol?
+- Allow configuration for the intervals to be displayed by the report?
 - Publish as pkg for easy distribution? (To investigate)
