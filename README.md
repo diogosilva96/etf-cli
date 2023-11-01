@@ -22,7 +22,6 @@ Steps:
 5. You can then run any command using `etf-cli [command]`
 
 ## TODO
-- Tidy up error handling & improve command error messages
 - Add functional options pattern for client.go ?
-- Allow configuration for the intervals to be displayed by the report?
-- Publish as pkg for easy distribution? (To investigate)
+- Add command to configure the intervals to be displayed for the reports?
+- Investigate how to publish cli (e.g, homebrew, goreleaser)
