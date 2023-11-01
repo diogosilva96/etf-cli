@@ -24,4 +24,4 @@ Steps:
 ## TODO
 - Add functional options pattern for client.go ?
 - Add command to configure the intervals to be displayed for the reports?
-- Investigate how to publish cli (e.g, homebrew, goreleaser)
+- Investigate how to publish cli by using for example homebrew, goreleaser
