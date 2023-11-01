@@ -22,6 +22,10 @@ When the 'report' command is used the data from the removed ETF will no longer b
 			return
 		}
 		etfs := config.ListEtfs()
+		if idx <= 0 || idx > len(etfs) {
+			cmd.PrintErrf("There is no ETF for index %v.", idx)
+			return
+		}
 		for i, etf := range etfs {
 			if idx == i+1 {
 				err := config.RemoveEtf(etf)
