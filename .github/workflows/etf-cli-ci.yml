@@ -9,4 +9,4 @@ jobs:
     uses: diogosilva96/workflow-templates/.github/workflows/go-build-package-template.yml@main
     with:
        go-version: '1.21.x'
-       publish-package: ${{ github.ref_name == 'main"' }}
+       publish-package: ${{ github.ref_name == 'main' }}
