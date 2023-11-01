@@ -25,7 +25,7 @@ A report will be generated for each ETF in the configuration.`,
 			return
 		}
 
-		reportGenerator, err := report.NewReportGenerator(report.WithIntervals([]int{7, 30, 60}))
+		reportGenerator, err := report.NewReportGenerator(report.WithIntervals([]int{7, 30, 60, 90}))
 		if err != nil {
 			log.Fatal(err) // this should never happen in theory, unless misconfiguration
 		}
@@ -40,8 +40,12 @@ A report will be generated for each ETF in the configuration.`,
 				etf, err := etfClient.GetEtf(etfSymbol)
 
 				var r report.EtfReport
+				var e error
 				if err == nil {
-					r = *rg.GenerateReport(*etf)
+					r, e = rg.GenerateReport(*etf)
+					if e != nil {
+						cmd.Printf("[%s]\n%s", etfSymbol, e)
+					}
 				}
 				res := result{symbol: etfSymbol, report: &r, err: err}
 				ch <- res
@@ -69,7 +73,8 @@ func printReports(cmd *cobra.Command, ch <-chan result) {
 	for r := range ch {
 		cmd.Printf("----------------------------------------------------------------------------\n")
 		if r.err != nil {
-			cmd.Printf("Error: [%s] Something went wrong while fetching the etf data. Error details: %s\n", r.symbol, r.err)
+			cmd.Printf("[%s]\n", r.symbol)
+			cmd.Printf("Something went wrong: %s\n", r.err)
 			continue
 		}
 

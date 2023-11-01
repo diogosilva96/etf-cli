@@ -21,28 +21,27 @@ type ReportGenerator struct {
 type ReportGeneratorOption func(*ReportGenerator)
 
 // GenerateReport generates a report based on the provided etf struct.
-func (rg *ReportGenerator) GenerateReport(etf data.Etf) *EtfReport {
+func (rg *ReportGenerator) GenerateReport(etf data.Etf) (EtfReport, error) {
 
 	// set the number of days for the interval reports (e.g., last 5, 30 & 60 days)
 	previousDayPrice := etf.History[1].Price
-	report := &EtfReport{
-		Symbol:          etf.Symbol,
-		CurrentPrice:    etf.Price,
-		Change:          calculateChange(etf.Price, previousDayPrice),
-		PercentChange:   calculatePercentChange(etf.Price, previousDayPrice),
-		IntervalReports: make([]EtfIntervalReport, 0),
+	report := EtfReport{
+		Symbol:        etf.Symbol,
+		CurrentPrice:  etf.Price,
+		Change:        calculateChange(etf.Price, previousDayPrice),
+		PercentChange: calculatePercentChange(etf.Price, previousDayPrice),
 	}
 
+	var errs []error
 	for _, interval := range rg.Intervals {
 		intervalReport, err := generateIntervalReport(etf, interval)
 		if err != nil {
-			// do something, or is it ok to ignore?
+			errs = append(errs, errors.New(fmt.Sprintf("Something went wrong while generating report for %v days interval: %s", interval, err)))
 			continue
 		}
 		report.IntervalReports = append(report.IntervalReports, *intervalReport)
 	}
-
-	return report
+	return report, errorsToError(errs)
 }
 
 // NewReportGenerator initializes a new report generator.
@@ -113,4 +112,15 @@ func calculatePercentChange(currentValue float32, previousValue float32) float32
 
 func calculateChange(currentValue float32, previousValue float32) float32 {
 	return currentValue - previousValue
+}
+
+func errorsToError(errs []error) error {
+	if len(errs) == 0 {
+		return nil
+	}
+	var s string
+	for _, e := range errs {
+		s += fmt.Sprintf("- %s\n", e)
+	}
+	return errors.New(s)
 }
