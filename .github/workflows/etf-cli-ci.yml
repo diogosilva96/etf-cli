@@ -5,6 +5,18 @@ on:
     branches: [ "main", "development" ]
 
 jobs:
+  semver:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ✅ Checkout
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Generate SemVersion
+        id: semver
+        uses: paulhatch/semantic-version@v5.3.0
+      - name: Display SemVer
+        run: echo ${{ steps.semver.outputs.version }}-${{ github.run_id }}
+
   build:
     uses: diogosilva96/workflow-templates/.github/workflows/go-build.yml@main
     with:
