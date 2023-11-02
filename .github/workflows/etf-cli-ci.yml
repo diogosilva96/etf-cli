@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    uses: diogosilva96/workflow-templates/.github/workflows/go-build-package-template.yml@main
+    uses: diogosilva96/workflow-templates/.github/workflows/go-build-package.yml@main
     with:
        go-version: '1.21.x'
        publish-package: ${{ github.ref_name == 'main' }}
