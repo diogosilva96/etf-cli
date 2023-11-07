@@ -1,13 +1,16 @@
 package cmd
 
 import (
-	"log"
-	"sync"
-
+	"fmt"
 	"github.com/diogosilva96/etf-cli/internal/config"
 	"github.com/diogosilva96/etf-cli/internal/data"
 	"github.com/diogosilva96/etf-cli/internal/data/report"
 	"github.com/spf13/cobra"
+	"html/template"
+	"log"
+	"os"
+	"sync"
+	"time"
 )
 
 // reportCmd represents the report command
@@ -47,7 +50,7 @@ A report will be generated for each ETF in the configuration.`,
 						cmd.Printf("[%s]\n%s", etfSymbol, e)
 					}
 				}
-				res := result{symbol: etfSymbol, report: &r, data: etf, err: err}
+				res := result{symbol: etfSymbol, report: &r, err: err}
 				ch <- res
 			}(s, wg, ch, reportGenerator)
 		}
@@ -66,7 +69,6 @@ func init() {
 type result struct {
 	symbol string
 	report *report.EtfReport
-	data   *data.Etf
 	err    error
 }
 
@@ -79,6 +81,36 @@ func printReports(cmd *cobra.Command, ch <-chan result) {
 			continue
 		}
 
+		err := export(*r.report, "tmp.html")
+		if err != nil {
+			cmd.Printf("Something went wrong while exporting report: %s\n", err)
+		}
+
 		cmd.Printf("%s\n", r.report.String())
 	}
+}
+
+func export(r report.EtfReport, fileName string) error {
+	outPath := "./out"
+	if _, err := os.Stat(outPath); os.IsNotExist(err) {
+		err = os.Mkdir(outPath, os.ModePerm)
+		if err != nil {
+			return err
+		}
+	}
+	filePath := fmt.Sprintf("%s/%s", outPath, fileName)
+	tmpl := template.Must(template.ParseFiles("./views/report.html"))
+
+	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0600)
+	defer f.Close()
+	if err != nil {
+		return err
+	}
+	type reportTemplate struct {
+		Date    string
+		Reports []report.EtfReport
+	}
+	var reports []report.EtfReport
+	err = tmpl.Execute(f, reportTemplate{Date: time.Now().Format(time.RFC3339), Reports: append(reports, r)})
+	return err
 }
