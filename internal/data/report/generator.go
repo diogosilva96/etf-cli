@@ -21,8 +21,7 @@ type ReportGenerator struct {
 type ReportGeneratorOption func(*ReportGenerator)
 
 // GenerateReport generates a report based on the provided etf struct.
-func (rg *ReportGenerator) GenerateReport(etf data.Etf) (EtfReport, error) {
-
+func (rg ReportGenerator) GenerateReport(etf data.Etf) (EtfReport, error) {
 	// set the number of days for the interval reports (e.g., last 5, 30 & 60 days)
 	previousDayPrice := etf.History[1].Price
 	report := EtfReport{
@@ -30,6 +29,7 @@ func (rg *ReportGenerator) GenerateReport(etf data.Etf) (EtfReport, error) {
 		CurrentPrice:  etf.Price,
 		Change:        calculateChange(etf.Price, previousDayPrice),
 		PercentChange: calculatePercentChange(etf.Price, previousDayPrice),
+		RawData:       etf,
 	}
 
 	var errs []error

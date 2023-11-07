@@ -47,7 +47,7 @@ A report will be generated for each ETF in the configuration.`,
 						cmd.Printf("[%s]\n%s", etfSymbol, e)
 					}
 				}
-				res := result{symbol: etfSymbol, report: &r, err: err}
+				res := result{symbol: etfSymbol, report: &r, data: etf, err: err}
 				ch <- res
 			}(s, wg, ch, reportGenerator)
 		}
@@ -66,6 +66,7 @@ func init() {
 type result struct {
 	symbol string
 	report *report.EtfReport
+	data   *data.Etf
 	err    error
 }
 

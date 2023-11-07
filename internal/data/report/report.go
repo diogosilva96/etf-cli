@@ -2,6 +2,7 @@ package report
 
 import (
 	"fmt"
+	"github.com/diogosilva96/etf-cli/internal/data"
 	"strings"
 )
 
@@ -10,6 +11,7 @@ type EtfReport struct {
 	Symbol                              string
 	CurrentPrice, Change, PercentChange float32
 	IntervalReports                     []EtfIntervalReport
+	RawData                             data.Etf
 }
 
 // EtfIntervalReport represents a report containing etf for a specific interval.
@@ -19,7 +21,7 @@ type EtfIntervalReport struct {
 }
 
 // String outputs a string representation for the report.
-func (r *EtfReport) String() string {
+func (r EtfReport) String() string {
 	var sb strings.Builder
 	if r.Change > 0 {
 		sb.WriteString(fmt.Sprintf("[%s] Price: %.2f, Change: +%.2f (+%.2f%%)", r.Symbol, r.CurrentPrice, r.Change, r.PercentChange))
