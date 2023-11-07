@@ -41,7 +41,7 @@ func NewEtfClient() *EtfClient {
 }
 
 // EtfExists checks whether the named etfSymbol exists.
-func (c *EtfClient) EtfExists(etfSymbol string) bool {
+func (c EtfClient) EtfExists(etfSymbol string) bool {
 	resp, err := c.getEtfDataResponse(etfSymbol)
 	if err != nil {
 		return false
@@ -56,7 +56,7 @@ func (c *EtfClient) EtfExists(etfSymbol string) bool {
 }
 
 // GetEtf retrieves the ETF information for the named etfSymbol and returns the scraped ETF.
-func (c *EtfClient) GetEtf(etfSymbol string) (*Etf, error) {
+func (c EtfClient) GetEtf(etfSymbol string) (*Etf, error) {
 	resp, err := c.getEtfDataResponse(etfSymbol)
 	if err != nil {
 		return nil, err
@@ -75,7 +75,7 @@ func (c *EtfClient) GetEtf(etfSymbol string) (*Etf, error) {
 	return etf, nil
 }
 
-func (c *EtfClient) getEtfDataResponse(etfSymbol string) (*http.Response, error) {
+func (c EtfClient) getEtfDataResponse(etfSymbol string) (*http.Response, error) {
 	if len(strings.TrimSpace(etfSymbol)) == 0 {
 		return nil, errors.New("The etf symbol should be specified.")
 	}
@@ -88,7 +88,7 @@ func (c *EtfClient) getEtfDataResponse(etfSymbol string) (*http.Response, error)
 	return c.client.Do(req)
 }
 
-func (c *EtfClient) createGetEtfRequest(etfSymbol string) (*http.Request, error) {
+func (c EtfClient) createGetEtfRequest(etfSymbol string) (*http.Request, error) {
 	u := fmt.Sprintf("%s/quote/%s/history", c.BaseUrl, etfSymbol)
 	r, err := http.NewRequest("GET", u, nil)
 	if err != nil {
