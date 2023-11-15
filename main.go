@@ -1,7 +1,17 @@
 package main
 
-import "github.com/diogosilva96/etf-cli/cmd"
+import (
+	"github.com/diogosilva96/etf-cli/cmd"
+	"log"
+)
 
 func main() {
-	cmd.Execute()
+	cli, err := cmd.NewCli()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = cli.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
