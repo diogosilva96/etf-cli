@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.com/diogosilva96/etf-cli/internal/config"
 	"github.com/spf13/cobra"
 )
 
@@ -15,14 +14,6 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-// Execute executes the command.
-func Execute() {
-	cobra.CheckErr(rootCmd.Execute())
-}
-
 func init() {
-	cobra.OnInitialize(func() {
-		cobra.CheckErr(config.InitConfig())
-	})
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 }
