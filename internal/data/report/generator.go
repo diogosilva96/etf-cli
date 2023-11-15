@@ -90,18 +90,16 @@ func generateIntervalReport(etf data.Etf, numberOfDays int) (*EtfIntervalReport,
 	if historySize-1 < numberOfDays {
 		return nil, errors.New(fmt.Sprintf("The etf history is only '%v' days long.", historySize))
 	}
-	for i, h := range etf.History[:numberOfDays] {
-		if h.Price > report.MaxPrice {
-			report.MaxPrice = h.Price
-		}
-		if h.Price < report.MinPrice {
-			report.MinPrice = h.Price
-		}
-		if i == numberOfDays-1 {
-			report.IntervalChange = calculateChange(etf.Price, h.Price)
-			report.IntervalPercentChange = calculatePercentChange(etf.Price, h.Price)
-		}
+
+	for _, h := range etf.History[:numberOfDays] {
+		report.MaxPrice = calculateMax(h.Price, report.MaxPrice)
+		report.MinPrice = calculateMin(h.Price, report.MinPrice)
 	}
+
+	report.MinPriceChange = calculateChange(etf.Price, report.MinPrice)
+	report.MinPricePercentChange = calculatePercentChange(etf.Price, report.MinPrice)
+	report.MaxPriceChange = calculateChange(etf.Price, report.MaxPrice)
+	report.MaxPricePercentChange = calculatePercentChange(etf.Price, report.MaxPrice)
 
 	return report, nil
 }
@@ -112,6 +110,20 @@ func calculatePercentChange(currentValue float32, previousValue float32) float32
 
 func calculateChange(currentValue float32, previousValue float32) float32 {
 	return currentValue - previousValue
+}
+
+func calculateMax(a, b float32) float32 {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func calculateMin(a, b float32) float32 {
+	if a < b {
+		return a
+	}
+	return b
 }
 
 func errorsToError(errs []error) error {
