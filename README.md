@@ -22,5 +22,6 @@ Steps:
 5. You can then run any command using `etf-cli [command]`
 
 ## TODO
-- Add command to configure the intervals to be displayed for the reports?
+- Add tests
+- Add html output option for the reports with graphs
 - Investigate how to publish cli by using for example homebrew, goreleaser
