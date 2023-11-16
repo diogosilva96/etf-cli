@@ -96,20 +96,20 @@ func generateIntervalReport(etf data.Etf, numberOfDays int) (*EtfIntervalReport,
 		report.MinPrice = calculateMin(h.Price, report.MinPrice)
 	}
 
-	report.MinPriceChange = calculateChange(etf.Price, report.MinPrice)
-	report.MinPricePercentChange = calculatePercentChange(etf.Price, report.MinPrice)
-	report.MaxPriceChange = calculateChange(etf.Price, report.MaxPrice)
-	report.MaxPricePercentChange = calculatePercentChange(etf.Price, report.MaxPrice)
+	report.MinPriceChange = calculateChange(report.MinPrice, etf.Price)
+	report.MinPricePercentChange = calculatePercentChange(report.MinPrice, etf.Price)
+	report.MaxPriceChange = calculateChange(report.MaxPrice, etf.Price)
+	report.MaxPricePercentChange = calculatePercentChange(report.MaxPrice, etf.Price)
 
 	return report, nil
 }
 
-func calculatePercentChange(currentValue float32, previousValue float32) float32 {
-	return ((currentValue - previousValue) / float32(math.Abs(float64(previousValue)))) * 100
+func calculatePercentChange(from float32, to float32) float32 {
+	return ((from - to) / float32(math.Abs(float64(to)))) * 100
 }
 
-func calculateChange(currentValue float32, previousValue float32) float32 {
-	return currentValue - previousValue
+func calculateChange(from float32, to float32) float32 {
+	return from - to
 }
 
 func calculateMax(a, b float32) float32 {
