@@ -7,66 +7,63 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"> </script>
 </head>
 <body>
-    <h1>ETF Reports {{ .Date }}</h1>
     <div>
-    {{range $i, $report := .Reports}}
+        <h1>ETF Reports {{ .Date }}</h1>
         <div>
-            <h3>{{ $report.Symbol }}</h3>
+        {{range $i, $report := .Reports}}
             <div>
-                <canvas id="chart-{{ $i }}" style="width:100%;max-width:700px"></canvas>
+                <h3>{{ $report.Symbol }}</h3>
+
+                    <canvas id="chart" style="width:100%;max-width:700px"></canvas>
+
             </div>
-        </div>
-        <script>
-            let dates = [];
-            let prices = [];
-            {{range $history := $report.RawData.History}}
-            dates.push({{$history.Date}})
-            prices.push({{$history.Price}})
-            {{ end }}
-
-            dates.reverse()
-            prices.reverse()
-
-            new Chart("chart-{{ $i }}", {
-                type: "line",
-                xAxisID: 'Date',
-                yAxisID: 'Price',
-                data: {
-                    labels: dates,
-                    datasets: [{
-                        label: '{{$report.Symbol}}',
-                        backgroundColor:"rgba(28, 118, 218, 0.33)",
-                        borderColor: "rgba(28, 118, 218, 0.52)",
-                        data: prices,
-                        pointRadius: 2,
-                        pointHoverRadius: 6
-                    }]
-                },
-                options: {
-                    scales: {
-                        yAxes: [{
-                            scaleLabel: {
-                                display: true,
-                                labelString: 'Price',
-                                font: {
-                                    size: 15
+            <script>
+                let dates = [{{range $history := $report.RawData.History}}{{$history.Date}},{{ end }}];
+                let prices = [{{range $history := $report.RawData.History}}{{$history.Price}},{{ end }}];
+                dates.reverse()
+                prices.reverse()
+                // make chart display all etfs
+                new Chart("chart", {
+                    type: "line",
+                    xAxisID: 'Date',
+                    yAxisID: 'Price',
+                    data: {
+                        labels: dates,
+                        datasets: [{
+                            label: '{{$report.Symbol}}',
+                            backgroundColor:"rgba(28, 118, 218, 0.33)",
+                            borderColor: "rgba(28, 118, 218, 0.52)",
+                            data: prices,
+                            pointRadius: 2,
+                            pointHoverRadius: 6
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Price',
+                                    font: {
+                                        size: 15
+                                    }
                                 }
-                            }
-                        }],
-                        xAxes: [{
-                            scaleLabel: {
-                                display: true,
-                                labelString: 'Date',
-                                font: {
-                                    size: 15
+                            }],
+                            xAxes: [{
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Date',
+                                    font: {
+                                        size: 15
+                                    }
                                 }
-                            }
-                        }],
+                            }],
+                        }
                     }
-                }
-            });
-        </script>
-    {{end}}
+                });
+            </script>
+        {{end}}
+        </div>
     </div>
 
 </body>
