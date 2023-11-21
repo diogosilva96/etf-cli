@@ -107,10 +107,10 @@ func export(r report.EtfReport, fileName string) error {
 		return err
 	}
 	type reportTemplate struct {
-		Date    string
+		Date    time.Time
 		Reports []report.EtfReport
 	}
 	var reports []report.EtfReport
-	err = tmpl.Execute(f, reportTemplate{Date: time.Now().Format(time.RFC3339), Reports: append(reports, r)})
+	err = tmpl.Execute(f, reportTemplate{Date: time.Now(), Reports: append(reports, r)})
 	return err
 }
