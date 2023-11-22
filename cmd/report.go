@@ -13,6 +13,19 @@ import (
 	"time"
 )
 
+const (
+	// htmlFileType represents an html file type.
+	htmlFileType fileType = "html"
+)
+
+const (
+	// timestampFormat represents a time format for 'yyyyMMddhhmmss'.
+	timestampFormat = "20060102150405"
+)
+
+// fileType represents a file type
+type fileType string
+
 // reportCmd represents the report command
 var reportCmd = &cobra.Command{
 	Use:   "report",
@@ -80,17 +93,24 @@ func printReports(cmd *cobra.Command, ch <-chan result) {
 			cmd.Printf("Something went wrong: %s\n", r.err)
 			continue
 		}
+		cmd.Printf("%s\n", r.report.String())
 
-		err := export(*r.report, "tmp.html")
+		// TODO: move this to somewhere else
+		fileName := createReportFileName(time.Now(), htmlFileType)
+		err := export(*r.report, fileName)
 		if err != nil {
 			cmd.Printf("Something went wrong while exporting report: %s\n", err)
 		}
-
-		cmd.Printf("%s\n", r.report.String())
 	}
 }
 
+func createReportFileName(t time.Time, fType fileType) string {
+	// TODO: move this to somewhere else
+	return fmt.Sprintf("%s-report.%s", t.Format(timestampFormat), fType)
+}
+
 func export(r report.EtfReport, fileName string) error {
+	// TODO: move this to somewhere else
 	outPath := "./out"
 	if _, err := os.Stat(outPath); os.IsNotExist(err) {
 		err = os.Mkdir(outPath, os.ModePerm)
@@ -99,7 +119,7 @@ func export(r report.EtfReport, fileName string) error {
 		}
 	}
 	filePath := fmt.Sprintf("%s/%s", outPath, fileName)
-	tmpl := template.Must(template.ParseFiles("./views/report.html"))
+	tmpl := template.Must(template.ParseFiles("./templates/report.html"))
 
 	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0600)
 	defer f.Close()
