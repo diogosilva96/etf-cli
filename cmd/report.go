@@ -71,8 +71,38 @@ A report will be generated for each ETF in the configuration.`,
 		wg.Wait()
 		close(ch)
 
-		printReports(cmd, ch)
+		reports := getReports(*cmd, ch)
+		printReports(*cmd, reports)
+
+		// TODO: move this to somewhere else
+		fileName := createReportFileName(time.Now(), htmlFileType)
+		err = export(reports, fileName)
+		if err != nil {
+			cmd.Printf("Something went wrong while exporting report: %s\n", err)
+		}
 	},
+}
+
+func getReports(cmd cobra.Command, ch <-chan result) []report.EtfReport {
+	var reports []report.EtfReport
+	for r := range ch {
+
+		if r.err != nil {
+			cmd.Printf("----------------------------------------------------------------------------\n")
+			cmd.Printf("[%s]\n", r.symbol)
+			cmd.Printf("Something went wrong: %s\n", r.err)
+			continue
+		}
+		reports = append(reports, *r.report)
+	}
+	return reports
+}
+
+func printReports(cmd cobra.Command, reports []report.EtfReport) {
+	for _, r := range reports {
+		cmd.Printf("----------------------------------------------------------------------------\n")
+		cmd.Printf("%s\n", r.String())
+	}
 }
 
 func init() {
@@ -85,31 +115,12 @@ type result struct {
 	err    error
 }
 
-func printReports(cmd *cobra.Command, ch <-chan result) {
-	for r := range ch {
-		cmd.Printf("----------------------------------------------------------------------------\n")
-		if r.err != nil {
-			cmd.Printf("[%s]\n", r.symbol)
-			cmd.Printf("Something went wrong: %s\n", r.err)
-			continue
-		}
-		cmd.Printf("%s\n", r.report.String())
-
-		// TODO: move this to somewhere else
-		fileName := createReportFileName(time.Now(), htmlFileType)
-		err := export(*r.report, fileName)
-		if err != nil {
-			cmd.Printf("Something went wrong while exporting report: %s\n", err)
-		}
-	}
-}
-
 func createReportFileName(t time.Time, fType fileType) string {
 	// TODO: move this to somewhere else
 	return fmt.Sprintf("%s-report.%s", t.Format(timestampFormat), fType)
 }
 
-func export(r report.EtfReport, fileName string) error {
+func export(reports []report.EtfReport, fileName string) error {
 	// TODO: move this to somewhere else
 	outPath := "./out"
 	if _, err := os.Stat(outPath); os.IsNotExist(err) {
@@ -126,11 +137,12 @@ func export(r report.EtfReport, fileName string) error {
 	if err != nil {
 		return err
 	}
+
 	type reportTemplate struct {
 		Date    time.Time
 		Reports []report.EtfReport
 	}
-	var reports []report.EtfReport
-	err = tmpl.Execute(f, reportTemplate{Date: time.Now(), Reports: append(reports, r)})
+	rt := reportTemplate{Date: time.Now(), Reports: reports}
+	err = tmpl.Execute(f, rt)
 	return err
 }
