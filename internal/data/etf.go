@@ -1,5 +1,7 @@
 package data
 
+import "time"
+
 // Etf Represents an Etf
 type Etf struct {
 	Symbol  string
@@ -9,6 +11,6 @@ type Etf struct {
 
 // EtfHistory represents a single history element of an ETF
 type EtfHistory struct {
-	Date  string
+	Date  time.Time
 	Price float32
 }

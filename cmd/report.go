@@ -2,15 +2,16 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/diogosilva96/etf-cli/internal/config"
-	"github.com/diogosilva96/etf-cli/internal/data"
-	"github.com/diogosilva96/etf-cli/internal/data/report"
-	"github.com/spf13/cobra"
 	"html/template"
 	"log"
 	"os"
 	"sync"
 	"time"
+
+	"github.com/diogosilva96/etf-cli/internal/config"
+	"github.com/diogosilva96/etf-cli/internal/data"
+	"github.com/diogosilva96/etf-cli/internal/data/report"
+	"github.com/spf13/cobra"
 )
 
 const (

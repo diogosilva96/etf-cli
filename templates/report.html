@@ -72,7 +72,7 @@
 
             </div>
             <script>
-                let dates = [{{range $history := $report.RawData.History}}{{$history.Date}},{{ end }}];
+                let dates = [{{range $history := $report.RawData.History}}{{$history.Date.Format "Jan 2, 2006"}},{{ end }}];
                 let prices = [{{range $history := $report.RawData.History}}{{$history.Price}},{{ end }}];
                 dates.reverse()
                 prices.reverse()

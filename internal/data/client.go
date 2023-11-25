@@ -16,6 +16,7 @@ const (
 	defaultUserAgent  = "github.com/diogosilva96/etf-cli"
 	host              = "finance.yahoo.com"
 	numberHistoryDays = 180
+	timeParseFormat   = "Jan 2, 2006"
 )
 
 // EtfClient Represents an etf client.
@@ -164,12 +165,16 @@ func scrapeHistory(document *goquery.Document, symbol string) ([]EtfHistory, err
 			}
 
 			if col == dateIndex {
-				h.Date = colSelection.Text()
+				d, err := time.Parse(timeParseFormat, colSelection.Text())
+				if err != nil {
+					panic(err) // TODO: handle this somehow
+				}
+				h.Date = d
 			}
 
 		})
 
-		if h.Price > 0 && len(h.Date) > 0 {
+		if h.Price > 0 && !h.Date.IsZero() {
 			history = append(history, h)
 		}
 	})
