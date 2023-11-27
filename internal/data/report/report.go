@@ -11,7 +11,7 @@ type EtfReport struct {
 	Symbol                              string
 	CurrentPrice, Change, PercentChange float32
 	IntervalReports                     []EtfIntervalReport
-	RawData                             data.Etf
+	History                             []data.EtfHistory
 }
 
 // EtfIntervalReport represents a report containing etf for a specific interval.

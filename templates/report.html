@@ -72,8 +72,8 @@
 
             </div>
             <script>
-                let dates = [{{range $history := $report.RawData.History}}{{$history.Date.Format "Jan 2, 2006"}},{{ end }}];
-                let prices = [{{range $history := $report.RawData.History}}{{$history.Price}},{{ end }}];
+                let dates = [{{range $history := $report.History}}{{$history.Date.Format "Jan 2, 2006"}},{{ end }}];
+                let prices = [{{range $history := $report.History}}{{$history.Price}},{{ end }}];
                 dates.reverse()
                 prices.reverse()
                 // TODO: make chart display all etfs
