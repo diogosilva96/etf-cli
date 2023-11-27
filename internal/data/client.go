@@ -16,7 +16,7 @@ const (
 	defaultUserAgent  = "github.com/diogosilva96/etf-cli"
 	host              = "finance.yahoo.com"
 	numberHistoryDays = 180
-	timeParseFormat   = "Jan 2, 2006"
+	parseTimeFormat   = "Jan 2, 2006"
 )
 
 // EtfClient Represents an etf client.
@@ -78,7 +78,7 @@ func (c EtfClient) GetEtf(etfSymbol string) (*Etf, error) {
 
 func (c EtfClient) getEtfDataResponse(etfSymbol string) (*http.Response, error) {
 	if len(strings.TrimSpace(etfSymbol)) == 0 {
-		return nil, errors.New("The etf symbol should be specified.")
+		return nil, errors.New("the etf symbol should be specified")
 	}
 
 	req, err := c.createGetEtfRequest(etfSymbol)
@@ -105,12 +105,12 @@ func scrapeEtf(document *goquery.Document, symbol string) (*Etf, error) {
 	var priceStr = document.Find(fmt.Sprintf("fin-streamer[data-symbol=\"%s\"][data-field=\"regularMarketPrice\"]", symbol)).Text()
 
 	if len(priceStr) <= 0 {
-		return nil, errors.New(fmt.Sprintf("Could not find etf '%s'", symbol))
+		return nil, errors.New(fmt.Sprintf("could not find etf '%s'", symbol))
 	}
 
 	price, err := strconv.ParseFloat(priceStr, 32)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Could not parse price for etf '%s'. Details: %s", symbol, err))
+		return nil, errors.New(fmt.Sprintf("could not parse price for etf '%s', details: %s", symbol, err))
 	}
 	etf.Price = float32(price)
 
@@ -143,7 +143,7 @@ func scrapeHistory(document *goquery.Document, symbol string) ([]EtfHistory, err
 	})
 
 	if dateIndex == -1 || priceIndex == -1 {
-		return nil, errors.New(fmt.Sprintf("Could not parse the history of the etf '%s'.", symbol))
+		return nil, errors.New(fmt.Sprintf("could not parse the history of the etf '%s'", symbol))
 	}
 
 	history := make([]EtfHistory, 0, numberHistoryDays)
@@ -165,7 +165,7 @@ func scrapeHistory(document *goquery.Document, symbol string) ([]EtfHistory, err
 			}
 
 			if col == dateIndex {
-				d, err := time.Parse(timeParseFormat, colSelection.Text())
+				d, err := time.Parse(parseTimeFormat, colSelection.Text())
 				if err != nil {
 					panic(err) // TODO: handle this somehow
 				}

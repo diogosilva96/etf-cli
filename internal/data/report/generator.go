@@ -41,7 +41,7 @@ func (rg ReportGenerator) GenerateReport(etf data.Etf) (EtfReport, error) {
 	for _, interval := range rg.Intervals {
 		intervalReport, err := generateIntervalReport(etf, interval)
 		if err != nil {
-			errs = append(errs, errors.New(fmt.Sprintf("Something went wrong while generating report for %v days interval: %s", interval, err)))
+			errs = append(errs, errors.New(fmt.Sprintf("something went wrong while generating report for %v days interval: %s", interval, err)))
 			continue
 		}
 		report.IntervalReports = append(report.IntervalReports, *intervalReport)
@@ -78,7 +78,7 @@ func validateReportGenerator(rg *ReportGenerator) error {
 	}
 	for _, i := range rg.Intervals {
 		if i < 1 {
-			return errors.New("The interval should be greater than 0.")
+			return errors.New("the interval should be greater than 0")
 		}
 	}
 	return nil
@@ -93,7 +93,7 @@ func generateIntervalReport(etf data.Etf, numberOfDays int) (*EtfIntervalReport,
 
 	historySize := len(etf.History)
 	if historySize-1 < numberOfDays {
-		return nil, errors.New(fmt.Sprintf("The etf history is only '%v' days long.", historySize))
+		return nil, errors.New(fmt.Sprintf("the etf history is only '%v' days long", historySize))
 	}
 
 	for _, h := range etf.History[:numberOfDays] {

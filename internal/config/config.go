@@ -29,7 +29,7 @@ func InitConfig() error {
 	_ = viper.SafeWriteConfig()
 
 	if err := viper.ReadInConfig(); err != nil {
-		return errors.New("Could not find config file.")
+		return errors.New("could not find config file")
 	}
 
 	return nil
@@ -38,12 +38,12 @@ func InitConfig() error {
 // AddEtf adds an etf to the configuration.
 func AddEtf(etf string) error {
 	if len(strings.TrimSpace(etf)) == 0 {
-		return errors.New(fmt.Sprintf("The input should not be empty."))
+		return errors.New(fmt.Sprintf("the input should not be empty"))
 	}
 
 	etfs := viper.GetStringSlice(etfsKey)
 	if contains(etfs, etf) {
-		return errors.New(fmt.Sprintf("The etf '%s' already exists in the configuration.", etf))
+		return errors.New(fmt.Sprintf("the etf '%s' already exists in the configuration", etf))
 	}
 
 	etfs = append(etfs, etf)
@@ -51,7 +51,7 @@ func AddEtf(etf string) error {
 
 	err := viper.WriteConfig()
 	if err != nil {
-		return errors.New(fmt.Sprintf("An error occurred while adding etf '%s' to the configuration. Details: %s", etf, err))
+		return errors.New(fmt.Sprintf("an error occurred while adding etf '%s' to the configuration, details: %s", etf, err))
 	}
 	return nil
 }
@@ -59,7 +59,7 @@ func AddEtf(etf string) error {
 // RemoveEtf removes an etf from the configuration.
 func RemoveEtf(etf string) error {
 	if len(strings.TrimSpace(etf)) == 0 {
-		return errors.New(fmt.Sprintf("The input should not be empty."))
+		return errors.New(fmt.Sprintf("the input should not be empty"))
 	}
 
 	etfs := viper.GetStringSlice(etfsKey)
@@ -69,13 +69,13 @@ func RemoveEtf(etf string) error {
 			viper.Set(etfsKey, etfs)
 			err := viper.WriteConfig()
 			if err != nil {
-				return errors.New(fmt.Sprintf("An error occurred while removing etf '%s' from the configuration. Details: %s", etf, err))
+				return errors.New(fmt.Sprintf("an error occurred while removing etf '%s' from the configuration, details: %s", etf, err))
 			}
 			return nil
 		}
 	}
 
-	return errors.New(fmt.Sprintf("The etf '%s' could not be found in the configuration.", etf))
+	return errors.New(fmt.Sprintf("the etf '%s' could not be found in the configuration", etf))
 }
 
 // ListEtfs reads the etfs section from the configuration.
