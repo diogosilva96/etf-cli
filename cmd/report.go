@@ -2,30 +2,15 @@ package cmd
 
 import (
 	"fmt"
-	"html/template"
-	"log"
-	"os"
-	"sync"
-	"time"
-
 	"github.com/diogosilva96/etf-cli/internal/config"
 	"github.com/diogosilva96/etf-cli/internal/data"
 	"github.com/diogosilva96/etf-cli/internal/data/report"
+	"github.com/diogosilva96/etf-cli/internal/data/report/exporter"
 	"github.com/spf13/cobra"
+	"log"
+	"sync"
+	"time"
 )
-
-const (
-	// htmlFileType represents an html file type.
-	htmlFileType fileType = "html"
-)
-
-const (
-	// timestampFormat represents a time format for 'yyyyMMddhhmmss'.
-	timestampFormat = "20060102150405"
-)
-
-// fileType represents a file type
-type fileType string
 
 // reportCmd represents the report command
 var reportCmd = &cobra.Command{
@@ -75,11 +60,12 @@ A report will be generated for each ETF in the configuration.`,
 		reports := getReports(*cmd, ch)
 		printReports(*cmd, reports)
 
-		// TODO: move this to somewhere else
-		fileName := createReportFileName(time.Now(), htmlFileType)
-		err = export(reports, fileName)
+		// TODO: move this to somewhere else (e.g., command flag)
+		fmt.Printf("%s\n", time.Now().Format("20060102150405"))
+		htmlExporter := exporter.NewHtmlReportExporter()
+		err = htmlExporter.Export(reports)
 		if err != nil {
-			cmd.Printf("Something went wrong while exporting report: %s\n", err)
+			cmd.PrintErrf("Something went wrong while exporting to html: %s\n", err)
 		}
 	},
 }
@@ -114,36 +100,4 @@ type result struct {
 	symbol string
 	report *report.EtfReport
 	err    error
-}
-
-func createReportFileName(t time.Time, fType fileType) string {
-	// TODO: move this to somewhere else
-	return fmt.Sprintf("%s-report.%s", t.Format(timestampFormat), fType)
-}
-
-func export(reports []report.EtfReport, fileName string) error {
-	// TODO: move this to somewhere else
-	outPath := "./out"
-	if _, err := os.Stat(outPath); os.IsNotExist(err) {
-		err = os.Mkdir(outPath, os.ModePerm)
-		if err != nil {
-			return err
-		}
-	}
-	filePath := fmt.Sprintf("%s/%s", outPath, fileName)
-	tmpl := template.Must(template.ParseFiles("./templates/report.html"))
-
-	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0600)
-	defer f.Close()
-	if err != nil {
-		return err
-	}
-
-	type reportTemplate struct {
-		Date    time.Time
-		Reports []report.EtfReport
-	}
-	rt := reportTemplate{Date: time.Now(), Reports: reports}
-	err = tmpl.Execute(f, rt)
-	return err
 }
