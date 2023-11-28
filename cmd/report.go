@@ -59,8 +59,8 @@ A report will be generated for each ETF in the configuration.`,
 		printReports(*cmd, reports)
 
 		// TODO: move this to somewhere else (e.g., command flag)
-		htmlExporter := exporter.NewHtmlReportExporter()
-		err = htmlExporter.Export(reports)
+		exporter := exporter.NewHtmlReportExporter()
+		err = exporter.Export(reports)
 		if err != nil {
 			cmd.PrintErrf("Something went wrong while exporting to html: %s\n", err)
 		}
