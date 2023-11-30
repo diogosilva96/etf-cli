@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/diogosilva96/etf-cli/internal/config"
 	"github.com/diogosilva96/etf-cli/internal/data"
 	"github.com/diogosilva96/etf-cli/internal/data/report"
@@ -8,6 +9,12 @@ import (
 	"github.com/spf13/cobra"
 	"log"
 	"sync"
+	"time"
+)
+
+const (
+	// timestampFormat represents a time format for 'yyyyMMddhhmmss'.
+	timestampFormat = "20060102150405"
 )
 
 // reportCmd represents the report command
@@ -60,7 +67,8 @@ A report will be generated for each ETF in the configuration.`,
 
 		// TODO: move this to somewhere else (e.g., command flag)
 		exporter := exporter.NewHtmlReportExporter()
-		err = exporter.Export(reports)
+		filePath := fmt.Sprintf("out/%s-report.%s", time.Now().Format(timestampFormat), "html") // TODO: make output folder configurable through the cli?
+		err = exporter.Export(reports, filePath)
 		if err != nil {
 			cmd.PrintErrf("Something went wrong while exporting to html: %s\n", err)
 		}
