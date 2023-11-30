@@ -7,6 +7,10 @@ import (
 	"strings"
 )
 
+const (
+	pathSeparator = "/"
+)
+
 // CreateFoldersIfNotExist creates the folders that don't yet exist on the specified file path.
 func CreateFoldersIfNotExist(filePath string) error {
 	if len(strings.TrimSpace(filePath)) == 0 {
@@ -14,15 +18,14 @@ func CreateFoldersIfNotExist(filePath string) error {
 	}
 
 	var err error
-	pathSeparator := "/"
-	directory, _ := path.Split(filePath)
-	directories := strings.Split(directory, pathSeparator)
-	for i, dir := range directories {
-		if len(strings.TrimSpace(dir)) == 0 {
+	dir, _ := path.Split(filePath)
+	dirs := strings.Split(dir, pathSeparator)
+	for i, d := range dirs {
+		if len(strings.TrimSpace(d)) == 0 {
 			// ignore empty directory
 			continue
 		}
-		dirPath := strings.Join(directories[0:i+1], pathSeparator)
+		dirPath := strings.Join(dirs[0:i+1], pathSeparator)
 		err = createFolderIfNotExist(dirPath)
 		if err != nil {
 			return err
