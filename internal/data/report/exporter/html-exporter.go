@@ -26,15 +26,18 @@ func (e htmlReportExporter) Export(reports []report.EtfReport, filePath string) 
 
 	tmpl := template.Must(template.ParseFiles("./templates/report.html"))
 
-	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0600)
-	defer f.Close()
+	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0600)
+	defer file.Close()
 	if err != nil {
 		return err
 	}
 
-	rt := createHtmlTemplateData(time.Now(), reports)
-	err = tmpl.Execute(f, rt)
-	return err
+	templateData := createHtmlTemplateData(time.Now(), reports)
+	err = tmpl.Execute(file, templateData)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func createHtmlTemplateData(date time.Time, reports []report.EtfReport) htmlTemplateData {
