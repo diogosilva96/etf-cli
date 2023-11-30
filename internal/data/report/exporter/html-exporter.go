@@ -1,10 +1,12 @@
 package exporter
 
 import (
+	"fmt"
 	"github.com/diogosilva96/etf-cli/internal/data/report"
 	"github.com/diogosilva96/etf-cli/internal/utils"
 	"html/template"
 	"os"
+	"sort"
 	"time"
 )
 
@@ -51,32 +53,45 @@ func createTemplateData(date time.Time, reports []report.EtfReport) templateData
 		Date:    date,
 		Reports: reports,
 		ChartData: chartData{
-			symbols: symbols,
-			entries: entries,
+			Symbols: symbols,
+			Entries: entries,
 		},
 	}
 }
 
 func createChartEntries(r report.EtfReport, entries []chartEntry) []chartEntry {
 	for _, h := range r.History {
-		found, entry := findChartEntry(entries, h.Date)
+		found, entry := findChartEntryByDate(entries, h.Date)
 		var prices []float32
 		if !found {
 			entry = &chartEntry{}
-			entry.date = h.Date
-			entry.prices = append(prices, h.Price)
+			entry.Date = h.Date
+			entry.Prices = append(prices, h.Price)
 			entries = append(entries, *entry)
 			continue
 		}
-		entry.prices = append(entry.prices, h.Price)
+		entry.Prices = append(entry.Prices, h.Price)
 		entries = append(entries, *entry)
 	}
+
+	sortByDateAscending(entries)
+	for _, e := range entries {
+		// TODO: seems to be an issue with the chart entries (multiple chart entries for the same date)
+		fmt.Printf("%+v %+v\n", e.Date.Format("Jan 2, 2006"), e.Prices)
+	}
+
 	return entries
 }
 
-func findChartEntry(entries []chartEntry, date time.Time) (bool, *chartEntry) {
+func sortByDateAscending(entries []chartEntry) {
+	sort.Slice(entries, func(i, j int) bool {
+		return entries[i].Date.Before(entries[j].Date)
+	})
+}
+
+func findChartEntryByDate(entries []chartEntry, date time.Time) (bool, *chartEntry) {
 	for _, e := range entries {
-		if e.date == date {
+		if e.Date.Year() == date.Year() && e.Date.YearDay() == date.YearDay() {
 			return true, &e
 		}
 	}
@@ -90,11 +105,11 @@ type templateData struct {
 }
 
 type chartData struct {
-	symbols []string
-	entries []chartEntry
+	Symbols []string
+	Entries []chartEntry
 }
 
 type chartEntry struct {
-	date   time.Time
-	prices []float32
+	Date   time.Time
+	Prices []float32
 }
