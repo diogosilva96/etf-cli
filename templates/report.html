@@ -72,11 +72,12 @@
 
             </div>
             <script>
+                // TODO: make chart display all etfs using template data (ChartData)
                 let dates = [{{range $history := $report.History}}{{$history.Date.Format "Jan 2, 2006"}},{{ end }}];
                 let prices = [{{range $history := $report.History}}{{$history.Price}},{{ end }}];
                 dates.reverse()
                 prices.reverse()
-                // TODO: make chart display all etfs
+
                 new Chart("chart", {
                     type: "line",
                     xAxisID: 'Date',
