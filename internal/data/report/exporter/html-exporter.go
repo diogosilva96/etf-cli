@@ -74,9 +74,7 @@ func createChartEntries(r report.EtfReport, entries []chartEntry) []chartEntry {
 			Prices: append(prices, h.Price),
 		})
 	}
-
 	sortByDateAscending(entries)
-
 	return entries
 }
 
