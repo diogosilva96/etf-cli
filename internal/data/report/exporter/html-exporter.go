@@ -1,7 +1,6 @@
 package exporter
 
 import (
-	"fmt"
 	"github.com/diogosilva96/etf-cli/internal/data/report"
 	"github.com/diogosilva96/etf-cli/internal/utils"
 	"html/template"
@@ -61,24 +60,22 @@ func createTemplateData(date time.Time, reports []report.EtfReport) templateData
 
 func createChartEntries(r report.EtfReport, entries []chartEntry) []chartEntry {
 	for _, h := range r.History {
-		found, entry := findChartEntryByDate(entries, h.Date)
+		found, idx := findChartEntryIndexByDate(entries, h.Date)
 		var prices []float32
-		if !found {
-			entry = &chartEntry{}
-			entry.Date = h.Date
-			entry.Prices = append(prices, h.Price)
-			entries = append(entries, *entry)
+		if found {
+			entry := entries[idx]
+			entry.Prices = append(entry.Prices, h.Price)
+			entries = append(entries[:idx], entries[idx+1:]...) // remove "old" found entry
+			entries = append(entries, entry)                    // append "new" entry
 			continue
 		}
-		entry.Prices = append(entry.Prices, h.Price)
-		entries = append(entries, *entry)
+		entries = append(entries, chartEntry{
+			Date:   h.Date,
+			Prices: append(prices, h.Price),
+		})
 	}
 
 	sortByDateAscending(entries)
-	for _, e := range entries {
-		// TODO: seems to be an issue with the chart entries (multiple chart entries for the same date)
-		fmt.Printf("%+v %+v\n", e.Date.Format("Jan 2, 2006"), e.Prices)
-	}
 
 	return entries
 }
@@ -89,13 +86,13 @@ func sortByDateAscending(entries []chartEntry) {
 	})
 }
 
-func findChartEntryByDate(entries []chartEntry, date time.Time) (bool, *chartEntry) {
-	for _, e := range entries {
+func findChartEntryIndexByDate(entries []chartEntry, date time.Time) (bool, int) {
+	for idx, e := range entries {
 		if e.Date.Year() == date.Year() && e.Date.YearDay() == date.YearDay() {
-			return true, &e
+			return true, idx
 		}
 	}
-	return false, nil
+	return false, -1
 }
 
 type templateData struct {
