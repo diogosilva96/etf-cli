@@ -60,15 +60,14 @@ func createTemplateData(date time.Time, reports []report.EtfReport) templateData
 
 func createChartEntries(r report.EtfReport, entries []chartEntry) []chartEntry {
 	for _, h := range r.History {
-		found, idx := findChartEntryIndexByDate(entries, h.Date)
-		var prices []float32
-		if found {
+		if found, idx := findChartEntryIndexByDate(entries, h.Date); found {
 			entry := entries[idx]
 			entry.Prices = append(entry.Prices, h.Price)
 			entries = removeEntry(entries, idx) // remove "old" found entry
 			entries = append(entries, entry)    // append "new" entry
 			continue
 		}
+		var prices []float32
 		entries = append(entries, chartEntry{
 			Date:   h.Date,
 			Prices: append(prices, h.Price),
