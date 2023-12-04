@@ -65,8 +65,8 @@ func createChartEntries(r report.EtfReport, entries []chartEntry) []chartEntry {
 		if found {
 			entry := entries[idx]
 			entry.Prices = append(entry.Prices, h.Price)
-			entries = append(entries[:idx], entries[idx+1:]...) // remove "old" found entry
-			entries = append(entries, entry)                    // append "new" entry
+			entries = removeEntry(entries, idx) // remove "old" found entry
+			entries = append(entries, entry)    // append "new" entry
 			continue
 		}
 		entries = append(entries, chartEntry{
@@ -78,6 +78,10 @@ func createChartEntries(r report.EtfReport, entries []chartEntry) []chartEntry {
 	sortByDateAscending(entries)
 
 	return entries
+}
+
+func removeEntry(entries []chartEntry, idx int) []chartEntry {
+	return append(entries[:idx], entries[idx+1:]...)
 }
 
 func sortByDateAscending(entries []chartEntry) {
